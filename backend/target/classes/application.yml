@@ -1,8 +1,10 @@
 spring:
   application:
     name: authapp
+  profiles:
+    default: postgresql
 
-  # Default profile: H2 in-memory database
+  # H2 remains available when explicitly activated with --spring.profiles.active=h2.
   datasource:
     url: jdbc:h2:mem:authdb;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver

@@ -36,7 +36,7 @@ public class WishlistService {
         }
         
         if (wishlistRepository.existsByUserIdAndProductId(userId, productId)) {
-            throw new IllegalStateException("Sản phẩm đã có trong danh sách yêu thích");
+            return;
         }
 
         Wishlist wishlist = Wishlist.builder()

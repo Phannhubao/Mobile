@@ -4,22 +4,36 @@ Flutter client for the Phan Nhu Bao Spring Boot backend.
 
 ## API URL
 
-By default, the app connects to `http://localhost:8080`. For Android, expose
-the host backend to the device before running the app:
+The app supports both front doors to the same backend:
+
+- `API_MODE=ngrok` uses the ngrok URL and is the default.
+- `API_MODE=local` uses `http://localhost:8080`.
+- `API_BASE_URL` overrides both modes with any explicit URL.
+
+Run through local port `8080`:
 
 ```powershell
 adb reverse tcp:8080 tcp:8080
+flutter run --dart-define=API_MODE=local
 ```
 
-Using `localhost` also keeps the HTTP callback valid for Google OAuth.
-Production web builds served by Spring Boot automatically use the current web
-backend URL configured at build time.
-
-Override it for a physical device or a separately hosted backend:
+For an Android emulator without `adb reverse`, override the local URL:
 
 ```powershell
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080
 ```
+
+Run through the current ngrok tunnel:
+
+```powershell
+flutter run --dart-define=API_MODE=ngrok --dart-define=NGROK_BASE_URL=https://your-id.ngrok-free.app
+```
+
+Both URLs reach the backend on port `8080`, so they use the same PostgreSQL
+database and the same `wishlist` table.
+
+Production web builds served by Spring Boot automatically use the backend URL
+configured at build time.
 
 ```powershell
 flutter build web --dart-define=API_BASE_URL=https://your-backend.example.com
@@ -38,15 +52,15 @@ firebase deploy --only hosting
 Start the backend and ngrok:
 
 ```powershell
-cd ..\phannhubao
-.\mvnw.cmd spring-boot:run
+cd ..\backend
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=postgresql"
 ngrok http 8080
 ```
 
 Run Flutter with the HTTPS forwarding URL shown by ngrok:
 
 ```powershell
-flutter run --dart-define=API_BASE_URL=https://your-id.ngrok-free.app
+flutter run --dart-define=API_MODE=ngrok --dart-define=NGROK_BASE_URL=https://your-id.ngrok-free.app
 ```
 
 Free ngrok URLs normally change whenever ngrok restarts, so pass the current

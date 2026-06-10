@@ -35,7 +35,8 @@ class FavoritesProvider extends ChangeNotifier {
           _favorites.add(FavoriteItem(
             product: product,
             selectedSize: product.sizes.isNotEmpty ? product.sizes.first : '',
-            selectedColor: product.colors.isNotEmpty ? product.colors.first : '',
+            selectedColor:
+                product.colors.isNotEmpty ? product.colors.first : '',
             isSoldOut: product.quantity == 0,
           ));
         }
@@ -52,7 +53,11 @@ class FavoritesProvider extends ChangeNotifier {
     return _favorites.any((item) => item.product.id == productId);
   }
 
-  Future<void> addFavorite(Product product, String size, String color) async {
+  Future<bool> addFavorite(Product product, String size, String color) async {
+    final previousIndex =
+        _favorites.indexWhere((item) => item.product.id == product.id);
+    final previousItem = previousIndex == -1 ? null : _favorites[previousIndex];
+
     // Optimistic update
     _favorites.removeWhere((item) => item.product.id == product.id);
     _favorites.add(FavoriteItem(
@@ -68,13 +73,17 @@ class FavoritesProvider extends ChangeNotifier {
     if (!success) {
       // Revert if failed
       _favorites.removeWhere((item) => item.product.id == product.id);
+      if (previousItem != null) {
+        _favorites.insert(previousIndex, previousItem);
+      }
       notifyListeners();
     }
+    return success;
   }
 
-  Future<void> removeFavorite(String productId) async {
+  Future<bool> removeFavorite(String productId) async {
     final index = _favorites.indexWhere((item) => item.product.id == productId);
-    if (index == -1) return;
+    if (index == -1) return true;
 
     final item = _favorites[index];
     _favorites.removeAt(index);
@@ -86,13 +95,14 @@ class FavoritesProvider extends ChangeNotifier {
       _favorites.insert(index, item);
       notifyListeners();
     }
+    return success;
   }
 
-  Future<void> toggle(Product product, String size, String color) async {
+  Future<bool> toggle(Product product, String size, String color) async {
     if (isFavorite(product.id)) {
-      await removeFavorite(product.id);
+      return removeFavorite(product.id);
     } else {
-      await addFavorite(product, size, color);
+      return addFavorite(product, size, color);
     }
   }
 

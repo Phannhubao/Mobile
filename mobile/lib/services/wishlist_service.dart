@@ -13,8 +13,7 @@ class WishlistService {
   Future<List<Product>?> getUserWishlist() async {
     try {
       final token = await _getToken();
-      print('>>> [WishlistService] getUserWishlist - token: ${token != null ? "${token.substring(0, 20)}..." : "NULL"}');
-      if (token == null) return null;
+      if (token == null || token.isEmpty) return null;
 
       final url = '${AppConstants.baseUrl}/api/wishlist';
       print('>>> [WishlistService] GET $url');
@@ -27,7 +26,8 @@ class WishlistService {
         },
       );
 
-      print('>>> [WishlistService] getUserWishlist - status: ${response.statusCode}');
+      print(
+          '>>> [WishlistService] getUserWishlist - status: ${response.statusCode}');
       print('>>> [WishlistService] getUserWishlist - body: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -45,9 +45,8 @@ class WishlistService {
     try {
       final token = await _getToken();
       print('>>> [WishlistService] addToWishlist - productId: $productId');
-      print('>>> [WishlistService] addToWishlist - token: ${token != null ? "${token.substring(0, 20)}..." : "NULL"}');
 
-      if (token == null) {
+      if (token == null || token.isEmpty) {
         print('>>> [WishlistService] addToWishlist - SKIPPED: no token!');
         return false;
       }
@@ -63,7 +62,8 @@ class WishlistService {
         },
       );
 
-      print('>>> [WishlistService] addToWishlist - status: ${response.statusCode}');
+      print(
+          '>>> [WishlistService] addToWishlist - status: ${response.statusCode}');
       print('>>> [WishlistService] addToWishlist - body: ${response.body}');
 
       return response.statusCode == 200;
@@ -78,7 +78,7 @@ class WishlistService {
       final token = await _getToken();
       print('>>> [WishlistService] removeFromWishlist - productId: $productId');
 
-      if (token == null) {
+      if (token == null || token.isEmpty) {
         print('>>> [WishlistService] removeFromWishlist - SKIPPED: no token!');
         return false;
       }
@@ -94,8 +94,10 @@ class WishlistService {
         },
       );
 
-      print('>>> [WishlistService] removeFromWishlist - status: ${response.statusCode}');
-      print('>>> [WishlistService] removeFromWishlist - body: ${response.body}');
+      print(
+          '>>> [WishlistService] removeFromWishlist - status: ${response.statusCode}');
+      print(
+          '>>> [WishlistService] removeFromWishlist - body: ${response.body}');
 
       return response.statusCode == 200;
     } catch (e) {
@@ -107,7 +109,7 @@ class WishlistService {
   Future<bool> checkWishlistStatus(String productId) async {
     try {
       final token = await _getToken();
-      if (token == null) return false;
+      if (token == null || token.isEmpty) return false;
 
       final response = await http.get(
         Uri.parse('${AppConstants.baseUrl}/api/wishlist/$productId/check'),

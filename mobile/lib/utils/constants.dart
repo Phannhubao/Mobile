@@ -1,14 +1,25 @@
 class AppConstants {
-  static const String _localBaseUrl = 'https://3424-2405-4802-93ea-5b00-61ec-d2c4-f7e6-9370.ngrok-free.app';
+  static const String _apiMode =
+      String.fromEnvironment('API_MODE', defaultValue: 'ngrok');
   static const String _configuredBaseUrl =
       String.fromEnvironment('API_BASE_URL');
+  static const String _localBaseUrl = String.fromEnvironment(
+    'LOCAL_BASE_URL',
+    defaultValue: 'http://localhost:8080',
+  );
+  static const String _ngrokBaseUrl = String.fromEnvironment(
+    'NGROK_BASE_URL',
+    defaultValue: 'https://1a90-14-224-164-69.ngrok-free.app',
+  );
 
   static String get baseUrl {
     if (_configuredBaseUrl.isNotEmpty) {
       return _withoutTrailingSlash(_configuredBaseUrl);
     }
 
-    return _localBaseUrl;
+    return _withoutTrailingSlash(
+      _apiMode.toLowerCase() == 'local' ? _localBaseUrl : _ngrokBaseUrl,
+    );
   }
 
   static Map<String, String> get getHeaders {
@@ -38,7 +49,7 @@ class AppConstants {
 
     final relativePath =
         trimmed.startsWith('/') ? trimmed.substring(1) : trimmed;
-    return Uri.parse('${baseUrl.endsWith('/') ? baseUrl : '$baseUrl/'}')
+    return Uri.parse(baseUrl.endsWith('/') ? baseUrl : '$baseUrl/')
         .resolve(relativePath)
         .toString();
   }

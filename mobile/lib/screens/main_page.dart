@@ -168,8 +168,29 @@ class _MainPageState extends State<MainPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<CartProvider>().fetchCart();
+        context.read<FavoritesProvider>().fetchFavorites();
       }
     });
+  }
+
+  Future<void> _toggleFavorite(Product product) async {
+    final favorites = context.read<FavoritesProvider>();
+    final wasFavorite = favorites.isFavorite(product.id);
+    final success = await favorites.toggle(
+      product,
+      product.sizes.isNotEmpty ? product.sizes.first : '',
+      product.colors.isNotEmpty ? product.colors.first : '',
+    );
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(success
+            ? (wasFavorite ? 'Removed from favorites' : 'Added to favorites')
+            : 'Could not update favorites'),
+        backgroundColor: success ? const Color(0xFFDB3022) : Colors.red,
+      ),
+    );
   }
 
   Future<void> _loadProducts() async {
@@ -730,6 +751,19 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget _buildSubClothesView({required double scale}) {
+    const categoryOrder = [
+      'Tops',
+      'Shirts & Blouses',
+      'Cardigans & Sweaters',
+      'Knitwear',
+      'Blazers',
+      'Outerwear',
+      'Pants',
+      'Jeans',
+      'Shorts',
+      'Skirts',
+      'Dresses',
+    ];
     final clothesCategories = _backendCategories
         .where((category) =>
             category.active &&
@@ -742,7 +776,17 @@ class _MainPageState extends State<MainPage> {
         : _backendCategories
             .where((category) =>
                 category.active && category.parentId == clothes.id)
-            .toList();
+            .toList()
+      ..sort((a, b) {
+        final aIndex = categoryOrder.indexOf(a.categoryName);
+        final bIndex = categoryOrder.indexOf(b.categoryName);
+        if (aIndex == -1 && bIndex == -1) {
+          return a.categoryName.compareTo(b.categoryName);
+        }
+        if (aIndex == -1) return 1;
+        if (bIndex == -1) return -1;
+        return aIndex.compareTo(bIndex);
+      });
 
     return Container(
       color: const Color(0xFFF9F9F9),
@@ -1448,8 +1492,6 @@ class _MainPageState extends State<MainPage> {
     final photoH = 104 * scale;
     final String fullImageUrl = AppConstants.resolveUrl(product.imageUrl);
 
-    final bool isFavorited = product.productName == 'T-shirt';
-
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -1589,32 +1631,35 @@ class _MainPageState extends State<MainPage> {
             Positioned(
               right: 0,
               bottom: -12 * scale,
-              child: GestureDetector(
-                onTap: () {
-                  // Favorite action mockup
-                },
-                child: Container(
-                  width: 36 * scale,
-                  height: 36 * scale,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x1F000000),
-                        blurRadius: 4 * scale,
-                        offset: Offset(0, 4 * scale),
+              child: Consumer<FavoritesProvider>(
+                builder: (context, favorites, _) {
+                  final isFavorite = favorites.isFavorite(product.id);
+                  return GestureDetector(
+                    onTap: () => _toggleFavorite(product),
+                    child: Container(
+                      width: 36 * scale,
+                      height: 36 * scale,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0x1F000000),
+                            blurRadius: 4 * scale,
+                            offset: Offset(0, 4 * scale),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Icon(
-                    isFavorited ? Icons.favorite : Icons.favorite_border,
-                    size: 16 * scale,
-                    color: isFavorited
-                        ? const Color(0xFFDB3022)
-                        : const Color(0xFF9B9B9B),
-                  ),
-                ),
+                      child: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        size: 16 * scale,
+                        color: isFavorite
+                            ? const Color(0xFFDB3022)
+                            : const Color(0xFF9B9B9B),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -2566,27 +2611,53 @@ class _ProductCard extends StatelessWidget {
             Positioned(
               right: 0,
               top: topFav,
-              child: GestureDetector(
-                onTap: () {
-                  // Favorite Action
-                },
-                child: Container(
-                  width: 36 * scale,
-                  height: 36 * scale,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x14000000),
-                        blurRadius: 4 * scale,
-                        offset: Offset(0, 4 * scale),
+              child: Consumer<FavoritesProvider>(
+                builder: (context, favorites, _) {
+                  final isFavorite = favorites.isFavorite(product.id);
+                  return GestureDetector(
+                    onTap: () async {
+                      final success = await favorites.toggle(
+                        product,
+                        product.sizes.isNotEmpty ? product.sizes.first : '',
+                        product.colors.isNotEmpty ? product.colors.first : '',
+                      );
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(success
+                              ? (isFavorite
+                                  ? 'Removed from favorites'
+                                  : 'Added to favorites')
+                              : 'Could not update favorites'),
+                          backgroundColor:
+                              success ? const Color(0xFFDB3022) : Colors.red,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 36 * scale,
+                      height: 36 * scale,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0x14000000),
+                            blurRadius: 4 * scale,
+                            offset: Offset(0, 4 * scale),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Icon(Icons.favorite_border,
-                      size: 16 * scale, color: const Color(0xFF9B9B9B)),
-                ),
+                      child: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        size: 16 * scale,
+                        color: isFavorite
+                            ? const Color(0xFFDB3022)
+                            : const Color(0xFF9B9B9B),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             // Brand

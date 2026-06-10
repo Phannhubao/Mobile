@@ -430,8 +430,8 @@ class _BagScreenState extends State<BagScreen> {
                                   child: imageUrl.isNotEmpty
                                       ? Image.network(
                                           imageUrl,
-                                          headers:
-                                              AppConstants.imageHeaders(imageUrl),
+                                          headers: AppConstants.imageHeaders(
+                                              imageUrl),
                                           fit: BoxFit.cover,
                                           alignment: Alignment.center,
                                           errorBuilder: (_, __, ___) =>
@@ -506,25 +506,31 @@ class _BagScreenState extends State<BagScreen> {
                                                 color: Colors.white,
                                                 elevation: 4,
                                                 offset: Offset(-10 * scale, 0),
-                                                onSelected: (value) {
+                                                onSelected: (value) async {
                                                   if (value == 'favorites') {
                                                     final favProvider = Provider
                                                         .of<FavoritesProvider>(
                                                             context,
                                                             listen: false);
-                                                    favProvider.addFavorite(
+                                                    final success =
+                                                        await favProvider
+                                                            .addFavorite(
                                                       item.product,
                                                       item.selectedSize,
                                                       item.selectedColor,
                                                     );
+                                                    if (!context.mounted)
+                                                      return;
                                                     ScaffoldMessenger.of(
                                                             context)
                                                         .showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                            'Added to favorites'),
-                                                        backgroundColor:
-                                                            Colors.green,
+                                                      SnackBar(
+                                                        content: Text(success
+                                                            ? 'Added to favorites'
+                                                            : 'Could not add to favorites'),
+                                                        backgroundColor: success
+                                                            ? Colors.green
+                                                            : Colors.red,
                                                       ),
                                                     );
                                                   } else if (value ==

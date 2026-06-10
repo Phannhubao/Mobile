@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -62,7 +60,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     try {
       List<Product> products = [];
       if (widget.product.tags.isNotEmpty) {
-        products = await _productService.getProductsByTag(widget.product.tags.first.tagName);
+        products = await _productService
+            .getProductsByTag(widget.product.tags.first.tagName);
       }
       if (products.isEmpty || products.length <= 1) {
         products = await _productService.getNewProducts();
@@ -84,7 +83,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final scale = (MediaQuery.of(context).size.width / 375).clamp(0.5, 1.5);
-    final isNew = widget.product.tags.any((t) => t.tagName.toUpperCase() == 'NEW');
+    final isNew =
+        widget.product.tags.any((t) => t.tagName.toUpperCase() == 'NEW');
     final isOnSale = widget.product.comparePrice != null &&
         widget.product.comparePrice! > widget.product.salePrice;
 
@@ -103,7 +103,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: const Color(0xFF222222), size: 20 * scale),
+          icon: Icon(Icons.arrow_back_ios_new,
+              color: const Color(0xFF222222), size: 20 * scale),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -117,7 +118,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.share_outlined, color: const Color(0xFF222222), size: 22 * scale),
+            icon: Icon(Icons.share_outlined,
+                color: const Color(0xFF222222), size: 22 * scale),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Chia sẻ sản phẩm thành công!')),
@@ -141,7 +143,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       height: 413 * scale,
                       child: galleryImages[0].isNotEmpty
                           ? PageView.builder(
-                              controller: PageController(viewportFraction: 1.0, keepPage: true),
+                              controller: PageController(
+                                  viewportFraction: 1.0, keepPage: true),
                               padEnds: true,
                               itemCount: galleryImages.length,
                               itemBuilder: (context, index) {
@@ -154,7 +157,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   errorBuilder: (context, error, stackTrace) {
                                     return Container(
                                       color: const Color(0xFFE0E0E0),
-                                      child: const Icon(Icons.image, color: Colors.grey, size: 50),
+                                      child: const Icon(Icons.image,
+                                          color: Colors.grey, size: 50),
                                     );
                                   },
                                 );
@@ -163,7 +167,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           : Container(
                               color: const Color(0xFFE0E0E0),
                               child: Center(
-                                child: Icon(Icons.image, color: Colors.grey, size: 50 * scale),
+                                child: Icon(Icons.image,
+                                    color: Colors.grey, size: 50 * scale),
                               ),
                             ),
                     ),
@@ -180,24 +185,31 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               onTap: () => _showSizeBottomSheet(context),
                               child: Container(
                                 height: 40 * scale,
-                                padding: EdgeInsets.symmetric(horizontal: 12 * scale),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12 * scale),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: const Color(0xFFE0E0E0)),
-                                  borderRadius: BorderRadius.circular(8 * scale),
+                                  border: Border.all(
+                                      color: const Color(0xFFE0E0E0)),
+                                  borderRadius:
+                                      BorderRadius.circular(8 * scale),
                                   color: Colors.white,
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      _selectedSize == 'Size' ? 'Size' : _selectedSize,
+                                      _selectedSize == 'Size'
+                                          ? 'Size'
+                                          : _selectedSize,
                                       style: GoogleFonts.inter(
                                         fontSize: 14 * scale,
                                         color: const Color(0xFF222222),
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    const Icon(Icons.keyboard_arrow_down, color: Color(0xFF222222)),
+                                    const Icon(Icons.keyboard_arrow_down,
+                                        color: Color(0xFF222222)),
                                   ],
                                 ),
                               ),
@@ -211,24 +223,31 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               onTap: () => _showColorBottomSheet(context),
                               child: Container(
                                 height: 40 * scale,
-                                padding: EdgeInsets.symmetric(horizontal: 12 * scale),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12 * scale),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: const Color(0xFFE0E0E0)),
-                                  borderRadius: BorderRadius.circular(8 * scale),
+                                  border: Border.all(
+                                      color: const Color(0xFFE0E0E0)),
+                                  borderRadius:
+                                      BorderRadius.circular(8 * scale),
                                   color: Colors.white,
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      _selectedColor == 'Color' ? 'Color' : _selectedColor,
+                                      _selectedColor == 'Color'
+                                          ? 'Color'
+                                          : _selectedColor,
                                       style: GoogleFonts.inter(
                                         fontSize: 14 * scale,
                                         color: const Color(0xFF222222),
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    const Icon(Icons.keyboard_arrow_down, color: Color(0xFF222222)),
+                                    const Icon(Icons.keyboard_arrow_down,
+                                        color: Color(0xFF222222)),
                                   ],
                                 ),
                               ),
@@ -239,15 +258,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           // Favorite Button
                           Consumer<FavoritesProvider>(
                             builder: (ctx, favProvider, _) {
-                              final isFav = favProvider.isFavorite(widget.product.id);
+                              final isFav =
+                                  favProvider.isFavorite(widget.product.id);
                               return GestureDetector(
-                                onTap: () {
+                                onTap: () async {
                                   if (isFav) {
-                                    favProvider.removeFavorite(widget.product.id);
+                                    final success = await favProvider
+                                        .removeFavorite(widget.product.id);
+                                    if (!context.mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Removed from favorites'),
+                                      SnackBar(
+                                        content: Text(success
+                                            ? 'Removed from favorites'
+                                            : 'Could not update favorites'),
                                         duration: Duration(seconds: 2),
+                                        backgroundColor:
+                                            success ? null : Colors.red,
                                       ),
                                     );
                                   } else {
@@ -269,8 +295,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     ],
                                   ),
                                   child: Icon(
-                                    isFav ? Icons.favorite : Icons.favorite_border,
-                                    color: isFav ? const Color(0xFFDB3022) : const Color(0xFF9B9B9B),
+                                    isFav
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: isFav
+                                        ? const Color(0xFFDB3022)
+                                        : const Color(0xFF9B9B9B),
                                     size: 20 * scale,
                                   ),
                                 ),
@@ -372,12 +402,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             child: Row(
                               children: [
                                 ...List.generate(5, (i) {
-                                  final isFilled =
-                                      i < (_ratingSummary?.averageRating ?? 0).floor();
+                                  final isFilled = i <
+                                      (_ratingSummary?.averageRating ?? 0)
+                                          .floor();
                                   return Icon(
                                     Icons.star,
                                     size: 14 * scale,
-                                    color: isFilled ? const Color(0xFFFFBA49) : const Color(0xFF9B9B9B),
+                                    color: isFilled
+                                        ? const Color(0xFFFFBA49)
+                                        : const Color(0xFF9B9B9B),
                                   );
                                 }),
                                 SizedBox(width: 4 * scale),
@@ -479,7 +512,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 )
                               : _relatedProducts.isEmpty
                                   ? Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 8 * scale),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 8 * scale),
                                       child: Text(
                                         'Không có sản phẩm gợi ý nào',
                                         style: GoogleFonts.inter(
@@ -496,7 +530,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         itemBuilder: (context, index) {
                                           final p = _relatedProducts[index];
                                           return Padding(
-                                            padding: EdgeInsets.only(right: 16 * scale),
+                                            padding: EdgeInsets.only(
+                                                right: 16 * scale),
                                             child: _RelatedProductCard(
                                               product: p,
                                               scale: scale,
@@ -544,12 +579,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             _showSizeBottomSheet(context);
                             return;
                           }
-                          final color = _selectedColor == 'Color' ? 'Black' : _selectedColor;
+                          final color = _selectedColor == 'Color'
+                              ? 'Black'
+                              : _selectedColor;
                           Provider.of<CartProvider>(context, listen: false)
                               .addItem(widget.product, _selectedSize, color);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Added ${widget.product.productName} (Size $_selectedSize) to bag!'),
+                              content: Text(
+                                  'Added ${widget.product.productName} (Size $_selectedSize) to bag!'),
                               backgroundColor: Colors.green,
                             ),
                           );
@@ -579,14 +617,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     child: SizedBox(
                       height: 48 * scale,
                       child: ElevatedButton(
-                        onPressed: () => _showAddToFavoritesBottomSheet(context),
+                        onPressed: () =>
+                            _showAddToFavoritesBottomSheet(context),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFDB3022),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24 * scale),
                           ),
                           elevation: 4,
-                          shadowColor: const Color(0xFFD32626).withOpacity(0.25),
+                          shadowColor:
+                              const Color(0xFFD32626).withOpacity(0.25),
                         ),
                         child: Text(
                           'ADD TO FAVORITES',
@@ -620,172 +660,184 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
-            final scale = (MediaQuery.of(context).size.width / 375).clamp(0.5, 1.5);
+            final scale =
+                (MediaQuery.of(context).size.width / 375).clamp(0.5, 1.5);
             return Padding(
-              padding: EdgeInsets.fromLTRB(16 * scale, 12 * scale, 16 * scale, 16 * scale),
+              padding: EdgeInsets.fromLTRB(
+                  16 * scale, 12 * scale, 16 * scale, 16 * scale),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Drag Handle
-                  Center(
-                    child: Container(
-                      width: 60 * scale,
-                      height: 6 * scale,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFC4C4C4),
-                        borderRadius: BorderRadius.circular(3),
+                  children: [
+                    // Drag Handle
+                    Center(
+                      child: Container(
+                        width: 60 * scale,
+                        height: 6 * scale,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFC4C4C4),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 16 * scale),
+                    SizedBox(height: 16 * scale),
 
-                  // Title
-                  Center(
-                    child: Text(
-                      'Select size',
-                      style: GoogleFonts.outfit(
-                        fontSize: 18 * scale,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF222222),
+                    // Title
+                    Center(
+                      child: Text(
+                        'Select size',
+                        style: GoogleFonts.outfit(
+                          fontSize: 18 * scale,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF222222),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 24 * scale),
+                    SizedBox(height: 24 * scale),
 
-                  // Size Buttons Grid (Wrap)
-                  Wrap(
-                    spacing: 12 * scale,
-                    runSpacing: 12 * scale,
-                    children: _sizes.map((size) {
-                      final isSelected = _selectedSize == size;
-                      return GestureDetector(
-                        onTap: () {
-                          setModalState(() {
-                            _selectedSize = size;
-                          });
-                          setState(() {
-                            _selectedSize = size;
-                          });
-                        },
-                        child: Container(
-                          width: (100 * scale).clamp(60.0, 150.0),
-                          height: 40 * scale,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: isSelected ? const Color(0xFFDB3022) : const Color(0xFFE0E0E0),
-                              width: isSelected ? 1.5 : 1.0,
+                    // Size Buttons Grid (Wrap)
+                    Wrap(
+                      spacing: 12 * scale,
+                      runSpacing: 12 * scale,
+                      children: _sizes.map((size) {
+                        final isSelected = _selectedSize == size;
+                        return GestureDetector(
+                          onTap: () {
+                            setModalState(() {
+                              _selectedSize = size;
+                            });
+                            setState(() {
+                              _selectedSize = size;
+                            });
+                          },
+                          child: Container(
+                            width: (100 * scale).clamp(60.0, 150.0),
+                            height: 40 * scale,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: isSelected
+                                    ? const Color(0xFFDB3022)
+                                    : const Color(0xFFE0E0E0),
+                                width: isSelected ? 1.5 : 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8 * scale),
                             ),
-                            borderRadius: BorderRadius.circular(8 * scale),
-                          ),
-                          child: Center(
-                            child: Text(
-                              size,
-                              style: GoogleFonts.inter(
-                                fontSize: 14 * scale,
-                                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                color: isSelected ? const Color(0xFFDB3022) : const Color(0xFF222222),
+                            child: Center(
+                              child: Text(
+                                size,
+                                style: GoogleFonts.inter(
+                                  fontSize: 14 * scale,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  color: isSelected
+                                      ? const Color(0xFFDB3022)
+                                      : const Color(0xFF222222),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: 24 * scale),
-
-                  const Divider(height: 1, color: Color(0xFFF0F0F0)),
-
-                  // Size info row
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                      _showBottomSheetInfo(
-                        context,
-                        'Size info',
-                        'Bảng quy đổi kích thước chuẩn:\n- XS: Ngực 80-84cm, Eo 62-66cm\n- S: Ngực 84-88cm, Eo 66-70cm\n- M: Ngực 88-92cm, Eo 70-74cm\n- L: Ngực 92-96cm, Eo 74-78cm\n- XL: Ngực 96-100cm, Eo 78-82cm',
-                      );
-                    },
-                    child: Container(
-                      height: 48 * scale,
-                      padding: EdgeInsets.symmetric(vertical: 12 * scale),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Size info',
-                            style: GoogleFonts.inter(
-                              fontSize: 16 * scale,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF222222),
-                            ),
-                          ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: const Color(0xFF222222),
-                            size: 20 * scale,
-                          ),
-                        ],
-                      ),
+                        );
+                      }).toList(),
                     ),
-                  ),
-                  const Divider(height: 1, color: Color(0xFFF0F0F0)),
-                  SizedBox(height: 24 * scale),
+                    SizedBox(height: 24 * scale),
 
-                  // Add To Cart Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48 * scale,
-                    child: ElevatedButton(
-                      onPressed: () {
+                    const Divider(height: 1, color: Color(0xFFF0F0F0)),
+
+                    // Size info row
+                    InkWell(
+                      onTap: () {
                         Navigator.pop(context);
-                        if (_selectedSize == 'Size') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text('Vui lòng chọn kích thước (Size)'),
-                              backgroundColor: AppTheme.error,
-                            ),
-                          );
-                          return;
-                        }
-                        final color = _selectedColor == 'Color' ? 'Black' : _selectedColor;
-                        Provider.of<CartProvider>(context, listen: false)
-                            .addItem(widget.product, _selectedSize, color);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'Đã thêm ${widget.product.productName} (Size $_selectedSize) vào giỏ hàng!'),
-                            backgroundColor: Colors.green,
-                          ),
+                        _showBottomSheetInfo(
+                          context,
+                          'Size info',
+                          'Bảng quy đổi kích thước chuẩn:\n- XS: Ngực 80-84cm, Eo 62-66cm\n- S: Ngực 84-88cm, Eo 66-70cm\n- M: Ngực 88-92cm, Eo 70-74cm\n- L: Ngực 92-96cm, Eo 74-78cm\n- XL: Ngực 96-100cm, Eo 78-82cm',
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFDB3022),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24 * scale),
-                        ),
-                        elevation: 4,
-                        shadowColor: const Color(0xFFD32626).withValues(alpha: 0.25),
-                      ),
-                      child: Text(
-                        'ADD TO CART',
-                        style: GoogleFonts.inter(
-                          fontSize: 14 * scale,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
+                      child: Container(
+                        height: 48 * scale,
+                        padding: EdgeInsets.symmetric(vertical: 12 * scale),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Size info',
+                              style: GoogleFonts.inter(
+                                fontSize: 16 * scale,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF222222),
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right,
+                              color: const Color(0xFF222222),
+                              size: 20 * scale,
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    const Divider(height: 1, color: Color(0xFFF0F0F0)),
+                    SizedBox(height: 24 * scale),
+
+                    // Add To Cart Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48 * scale,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          if (_selectedSize == 'Size') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                    'Vui lòng chọn kích thước (Size)'),
+                                backgroundColor: AppTheme.error,
+                              ),
+                            );
+                            return;
+                          }
+                          final color = _selectedColor == 'Color'
+                              ? 'Black'
+                              : _selectedColor;
+                          Provider.of<CartProvider>(context, listen: false)
+                              .addItem(widget.product, _selectedSize, color);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Đã thêm ${widget.product.productName} (Size $_selectedSize) vào giỏ hàng!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFDB3022),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24 * scale),
+                          ),
+                          elevation: 4,
+                          shadowColor:
+                              const Color(0xFFD32626).withValues(alpha: 0.25),
+                        ),
+                        child: Text(
+                          'ADD TO CART',
+                          style: GoogleFonts.inter(
+                            fontSize: 14 * scale,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      );
+            );
+          },
+        );
       },
     );
   }
@@ -806,7 +858,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           builder: (ctx, setModalState) {
             final scale = (MediaQuery.of(ctx).size.width / 375).clamp(0.5, 1.5);
             return Padding(
-              padding: EdgeInsets.fromLTRB(16 * scale, 12 * scale, 16 * scale, 24 * scale),
+              padding: EdgeInsets.fromLTRB(
+                  16 * scale, 12 * scale, 16 * scale, 24 * scale),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -850,9 +903,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             width: (100 * scale).clamp(60.0, 150.0),
                             height: 40 * scale,
                             decoration: BoxDecoration(
-                              color: isSelected ? const Color(0xFFFFF0EE) : Colors.white,
+                              color: isSelected
+                                  ? const Color(0xFFFFF0EE)
+                                  : Colors.white,
                               border: Border.all(
-                                color: isSelected ? const Color(0xFFDB3022) : const Color(0xFFE0E0E0),
+                                color: isSelected
+                                    ? const Color(0xFFDB3022)
+                                    : const Color(0xFFE0E0E0),
                                 width: isSelected ? 1.5 : 1.0,
                               ),
                               borderRadius: BorderRadius.circular(8 * scale),
@@ -862,8 +919,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 size,
                                 style: GoogleFonts.inter(
                                   fontSize: 14 * scale,
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                  color: isSelected ? const Color(0xFFDB3022) : const Color(0xFF222222),
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  color: isSelected
+                                      ? const Color(0xFFDB3022)
+                                      : const Color(0xFF222222),
                                 ),
                               ),
                             ),
@@ -899,7 +960,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 color: const Color(0xFF222222),
                               ),
                             ),
-                            Icon(Icons.chevron_right, color: const Color(0xFF222222), size: 20 * scale),
+                            Icon(Icons.chevron_right,
+                                color: const Color(0xFF222222),
+                                size: 20 * scale),
                           ],
                         ),
                       ),
@@ -912,18 +975,36 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       width: double.infinity,
                       height: 48 * scale,
                       child: ElevatedButton(
-                        onPressed: () {
-                          final size = selectedSize.isEmpty ? 'M' : selectedSize;
-                          final color = selectedColor.isEmpty ? (_colors.first) : selectedColor;
-                          final favProvider = Provider.of<FavoritesProvider>(context, listen: false);
-                          favProvider.addFavorite(widget.product, size, color);
+                        onPressed: () async {
+                          final size =
+                              selectedSize.isEmpty ? 'M' : selectedSize;
+                          final color = selectedColor.isEmpty
+                              ? (_colors.first)
+                              : selectedColor;
+                          final favProvider = Provider.of<FavoritesProvider>(
+                              context,
+                              listen: false);
+                          final success = await favProvider.addFavorite(
+                              widget.product, size, color);
+                          if (!context.mounted || !ctx.mounted) return;
+                          if (!success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Could not add to favorites'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
                           setState(() {
-                            if (selectedSize.isNotEmpty) _selectedSize = selectedSize;
+                            if (selectedSize.isNotEmpty)
+                              _selectedSize = selectedSize;
                           });
                           Navigator.pop(ctx);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Added ${widget.product.productName} to favorites!'),
+                              content: Text(
+                                  'Added ${widget.product.productName} to favorites!'),
                               backgroundColor: const Color(0xFFDB3022),
                               duration: const Duration(seconds: 2),
                             ),
@@ -935,7 +1016,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             borderRadius: BorderRadius.circular(24 * scale),
                           ),
                           elevation: 4,
-                          shadowColor: const Color(0xFFDB3022).withOpacity(0.35),
+                          shadowColor:
+                              const Color(0xFFDB3022).withOpacity(0.35),
                         ),
                         child: Text(
                           'ADD TO FAVORITES',
@@ -969,9 +1051,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
-            final scale = (MediaQuery.of(context).size.width / 375).clamp(0.5, 1.5);
+            final scale =
+                (MediaQuery.of(context).size.width / 375).clamp(0.5, 1.5);
             return Padding(
-              padding: EdgeInsets.fromLTRB(16 * scale, 12 * scale, 16 * scale, 16 * scale),
+              padding: EdgeInsets.fromLTRB(
+                  16 * scale, 12 * scale, 16 * scale, 16 * scale),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1024,7 +1108,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
-                                color: isSelected ? const Color(0xFFDB3022) : const Color(0xFFE0E0E0),
+                                color: isSelected
+                                    ? const Color(0xFFDB3022)
+                                    : const Color(0xFFE0E0E0),
                                 width: isSelected ? 1.5 : 1.0,
                               ),
                               borderRadius: BorderRadius.circular(8 * scale),
@@ -1034,8 +1120,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 color,
                                 style: GoogleFonts.inter(
                                   fontSize: 14 * scale,
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                  color: isSelected ? const Color(0xFFDB3022) : const Color(0xFF222222),
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  color: isSelected
+                                      ? const Color(0xFFDB3022)
+                                      : const Color(0xFF222222),
                                 ),
                               ),
                             ),
@@ -1093,13 +1183,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           if (_selectedColor == 'Color') {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text('Vui lòng chọn màu sắc (Color)'),
+                                content:
+                                    const Text('Vui lòng chọn màu sắc (Color)'),
                                 backgroundColor: AppTheme.error,
                               ),
                             );
                             return;
                           }
-                          final size = _selectedSize == 'Size' ? 'M' : _selectedSize;
+                          final size =
+                              _selectedSize == 'Size' ? 'M' : _selectedSize;
                           Provider.of<CartProvider>(context, listen: false)
                               .addItem(widget.product, size, _selectedColor);
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -1116,7 +1208,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             borderRadius: BorderRadius.circular(24 * scale),
                           ),
                           elevation: 4,
-                          shadowColor: const Color(0xFFD32626).withValues(alpha: 0.25),
+                          shadowColor:
+                              const Color(0xFFD32626).withValues(alpha: 0.25),
                         ),
                         child: Text(
                           'ADD TO CART',
@@ -1171,7 +1264,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 
-  void _showBottomSheetInfo(BuildContext context, String title, String content) {
+  void _showBottomSheetInfo(
+      BuildContext context, String title, String content) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1245,13 +1339,18 @@ class _RelatedProductCard extends StatelessWidget {
     final topName = photoH + 39 * scale;
     final topPrice = photoH + 60 * scale;
 
-    final bool isOnSale = product.comparePrice != null && product.comparePrice! > product.salePrice;
+    final bool isOnSale = product.comparePrice != null &&
+        product.comparePrice! > product.salePrice;
     int discountPercent = 0;
     if (isOnSale) {
-      discountPercent = (((product.comparePrice! - product.salePrice) / product.comparePrice!) * 100).round();
+      discountPercent = (((product.comparePrice! - product.salePrice) /
+                  product.comparePrice!) *
+              100)
+          .round();
     }
 
-    final bool isNew = product.tags.any((t) => t.tagName.toUpperCase() == 'NEW');
+    final bool isNew =
+        product.tags.any((t) => t.tagName.toUpperCase() == 'NEW');
 
     final String fullImageUrl = AppConstants.resolveUrl(product.imageUrl);
 
@@ -1302,7 +1401,8 @@ class _RelatedProductCard extends StatelessWidget {
                 left: leftNew,
                 top: topNew,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8 * scale, vertical: 4 * scale),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 8 * scale, vertical: 4 * scale),
                   decoration: BoxDecoration(
                     color: const Color(0xFFDB3022),
                     borderRadius: BorderRadius.circular(29 * scale),
@@ -1325,7 +1425,8 @@ class _RelatedProductCard extends StatelessWidget {
                 left: leftNew,
                 top: topNew,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8 * scale, vertical: 4 * scale),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 8 * scale, vertical: 4 * scale),
                   decoration: BoxDecoration(
                     color: const Color(0xFF222222),
                     borderRadius: BorderRadius.circular(29 * scale),
@@ -1354,7 +1455,9 @@ class _RelatedProductCard extends StatelessWidget {
                     return Icon(
                       Icons.star,
                       size: 13 * scale,
-                      color: isFilled ? const Color(0xFFFFBA49) : const Color(0xFF9B9B9B),
+                      color: isFilled
+                          ? const Color(0xFFFFBA49)
+                          : const Color(0xFF9B9B9B),
                     );
                   }),
                   SizedBox(width: 4 * scale),
@@ -1372,26 +1475,53 @@ class _RelatedProductCard extends StatelessWidget {
             Positioned(
               right: 0,
               top: topFav,
-              child: GestureDetector(
-                onTap: () {
-                  // Favorite Action
-                },
-                child: Container(
-                  width: 36 * scale,
-                  height: 36 * scale,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x14000000),
-                        blurRadius: 4 * scale,
-                        offset: Offset(0, 4 * scale),
+              child: Consumer<FavoritesProvider>(
+                builder: (context, favorites, _) {
+                  final isFavorite = favorites.isFavorite(product.id);
+                  return GestureDetector(
+                    onTap: () async {
+                      final success = await favorites.toggle(
+                        product,
+                        product.sizes.isNotEmpty ? product.sizes.first : '',
+                        product.colors.isNotEmpty ? product.colors.first : '',
+                      );
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(success
+                              ? (isFavorite
+                                  ? 'Removed from favorites'
+                                  : 'Added to favorites')
+                              : 'Could not update favorites'),
+                          backgroundColor:
+                              success ? const Color(0xFFDB3022) : Colors.red,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 36 * scale,
+                      height: 36 * scale,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0x14000000),
+                            blurRadius: 4 * scale,
+                            offset: Offset(0, 4 * scale),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Icon(Icons.favorite_border, size: 16 * scale, color: const Color(0xFF9B9B9B)),
-                ),
+                      child: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        size: 16 * scale,
+                        color: isFavorite
+                            ? const Color(0xFFDB3022)
+                            : const Color(0xFF9B9B9B),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             // Brand
