@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login – AuthApp</title>
+  <meta name="description" content="Sign in to your AuthApp account." />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+<main class="auth-page">
+  <div class="auth-shell">
+
+    <!-- Back button -->
+    <a href="#" class="btn-back" id="btn-back-login" onclick="history.back(); return false;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </a>
+
+    <!-- Title -->
+    <h1 class="auth-title">Login</h1>
+
+    <!-- Alert messages -->
+    <div class="alert alert-success" id="login-success" role="alert"></div>
+    <div class="alert alert-danger"  id="login-error"   role="alert"></div>
+
+    <!-- Form -->
+    <form id="login-form" novalidate>
+
+      <!-- Email -->
+      <div class="form-group" id="group-email">
+        <input
+          type="email"
+          id="login-email"
+          name="email"
+          placeholder=" "
+          autocomplete="email"
+          required
+        />
+        <label for="login-email">Email</label>
+        <span class="icon-valid" aria-hidden="true">&#10003;</span>
+        <span class="form-error" id="email-error">Vui lòng nhập email hợp lệ.</span>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group" id="group-password">
+        <input
+          type="password"
+          id="login-password"
+          name="password"
+          placeholder=" "
+          autocomplete="current-password"
+          required
+        />
+        <label for="login-password">Password</label>
+        <button type="button" class="icon-toggle" id="toggle-password" aria-label="Toggle password visibility">
+          <svg id="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg id="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="display:none;">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        </button>
+        <span class="form-error" id="password-error">Vui lòng nhập mật khẩu.</span>
+      </div>
+
+      <!-- Forgot password -->
+      <div class="auth-link-row">
+        <a href="#" id="forgot-password-link">
+          Forgot your password?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-primary" id="login-btn">LOGIN</button>
+    </form>
+
+    <!-- Social -->
+    <p class="social-divider">Or login with social account</p>
+    <div class="social-row">
+      <a href="/oauth2/authorization/google" class="btn-social" id="google-login" aria-label="Login with Google">
+        <svg viewBox="0 0 48 48" width="26" height="26">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          <path fill="none" d="M0 0h48v48H0z"/>
+        </svg>
+      </a>
+      <a href="/oauth2/authorization/facebook" class="btn-social" id="facebook-login" aria-label="Login with Facebook">
+        <svg viewBox="0 0 48 48" width="26" height="26">
+          <path fill="#3B5998" d="M44 0H4C1.79 0 0 1.79 0 4v40c0 2.21 1.79 4 4 4h21.5V29.5H19V22h6.5v-5.4c0-6.4 3.9-9.9 9.6-9.9 2.7 0 5.6.2 6.3.3v7.3H37c-3.1 0-3.7 1.5-3.7 3.6V22H41l-1 7.5h-6.7V48H44c2.21 0 4-1.79 4-4V4c0-2.21-1.79-4-4-4z"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Don't have account -->
+    <p style="text-align:center; margin-top:24px; font-size:13.5px; color:#9E9E9E;">
+      Chưa có tài khoản?&nbsp;
+      <a href="signup.html" id="link-to-signup" style="color:#1A1A1A; font-weight:600; text-decoration:none;">
+        Đăng ký ngay →
+      </a>
+    </p>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+
+  function showGroup(groupId, state) {
+    const el = $(groupId);
+    el.classList.remove('is-valid', 'has-error');
+    if (state === 'valid') el.classList.add('is-valid');
+    if (state === 'error') el.classList.add('has-error');
+  }
+
+  function showAlert(type, msg) {
+    $('login-success').classList.remove('show');
+    $('login-error').classList.remove('show');
+    if (type === 'success') { $('login-success').textContent = msg; $('login-success').classList.add('show'); }
+    if (type === 'error')   { $('login-error').textContent = msg;   $('login-error').classList.add('show'); }
+  }
+
+  /* ---- Password visibility toggle ---- */
+  $('toggle-password').addEventListener('click', function () {
+    const input = $('login-password');
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    $('eye-open').style.display   = isPassword ? 'none' : '';
+    $('eye-closed').style.display = isPassword ? '' : 'none';
+  });
+
+  /* ---- Live validation ---- */
+  $('login-email').addEventListener('blur', function () {
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim());
+    showGroup('group-email', valid ? 'valid' : 'error');
+  });
+  $('login-email').addEventListener('input', function () {
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim())) showGroup('group-email', 'valid');
+  });
+
+  $('login-password').addEventListener('blur', function () {
+    showGroup('group-password', this.value.length > 0 ? 'valid' : 'error');
+  });
+
+  /* ---- Forgot password ---- */
+  $('forgot-password-link').addEventListener('click', function (e) {
+    e.preventDefault();
+    const email = $('login-email').value.trim();
+    if (!email) {
+      showAlert('error', 'Vui lòng nhập email để khôi phục mật khẩu.');
+      $('login-email').focus();
+      return;
+    }
+    showAlert('success', 'Link đặt lại mật khẩu đã được gửi đến ' + email);
+  });
+
+  /* ---- Form submit ---- */
+  $('login-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const email    = $('login-email').value.trim();
+    const password = $('login-password').value;
+
+    let ok = true;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showGroup('group-email', 'error'); ok = false; }
+    if (!password) { showGroup('group-password', 'error'); ok = false; }
+    if (!ok) return;
+
+    const btn = $('login-btn');
+    btn.classList.add('loading');
+    btn.textContent = 'Đang đăng nhập...';
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Store tokens
+        if (data.accessToken)  localStorage.setItem('accessToken',  data.accessToken);
+        if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+
+        showAlert('success', '✅ Đăng nhập thành công! Đang chuyển hướng...');
+        setTimeout(() => { window.location.href = '/'; }, 1500);
+      } else {
+        showAlert('error', data.message || 'Email hoặc mật khẩu không đúng.');
+        showGroup('group-email', 'error');
+        showGroup('group-password', 'error');
+      }
+    } catch (err) {
+      showAlert('error', 'Không thể kết nối server. Vui lòng kiểm tra lại.');
+    } finally {
+      btn.classList.remove('loading');
+      btn.textContent = 'LOGIN';
+    }
+  });
+})();
+</script>
+</body>
+</html>

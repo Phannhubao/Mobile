@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Redirecting...</title>
+</head>
+<body>
+  <p>Đang đăng nhập...</p>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const refreshToken = params.get('refreshToken');
+    if (token) {
+      const redirectUrl = window.location.href;
+      // Save to localStorage (for fallback polling)
+      localStorage.setItem('flutter-web-auth-2', redirectUrl);
+      localStorage.setItem('access_token', token);
+      localStorage.setItem('refresh_token', refreshToken || '');
+      // Try postMessage to opener (for popup flow)
+      if (window.opener) {
+        try {
+        window.opener.postMessage({ 'flutter-web-auth-2': redirectUrl }, '*');
+        } catch (_) {}
+        window.close();
+      } else {
+        window.location.href = '/';
+      }
+    } else {
+      document.body.innerHTML = '<p>Lỗi: không có token</p>';
+    }
+  </script>
+</body>
+</html>

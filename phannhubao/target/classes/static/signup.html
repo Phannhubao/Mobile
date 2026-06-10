@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up – AuthApp</title>
+  <meta name="description" content="Create your AuthApp account. Sign up with email or social accounts." />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+<main class="auth-page">
+  <div class="auth-shell">
+
+    <!-- Back button -->
+    <a href="#" class="btn-back" id="btn-back-signup" onclick="history.back(); return false;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </a>
+
+    <!-- Title -->
+    <h1 class="auth-title">Sign up</h1>
+
+    <!-- Alert messages -->
+    <div class="alert alert-success" id="signup-success" role="alert"></div>
+    <div class="alert alert-danger"  id="signup-error"   role="alert"></div>
+
+    <!-- Form -->
+    <form id="signup-form" novalidate>
+
+      <!-- Name -->
+      <div class="form-group" id="group-name">
+        <input
+          type="text"
+          id="signup-name"
+          name="name"
+          placeholder=" "
+          autocomplete="name"
+          required
+        />
+        <label for="signup-name">Name</label>
+        <span class="icon-valid" aria-hidden="true">&#10003;</span>
+        <span class="form-error" id="name-error">Please enter your full name.</span>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group" id="group-email">
+        <input
+          type="email"
+          id="signup-email"
+          name="email"
+          placeholder=" "
+          autocomplete="email"
+          required
+        />
+        <label for="signup-email">Email</label>
+        <span class="icon-valid" aria-hidden="true">&#10003;</span>
+        <span class="form-error" id="email-error">Please enter a valid email address.</span>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group" id="group-password">
+        <input
+          type="password"
+          id="signup-password"
+          name="password"
+          placeholder=" "
+          autocomplete="new-password"
+          required
+        />
+        <label for="signup-password">Password</label>
+        <button type="button" class="icon-toggle" id="toggle-password" aria-label="Toggle password visibility">
+          <!-- Eye icon -->
+          <svg id="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg id="eye-closed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" style="display:none;">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        </button>
+        <span class="form-error" id="password-error">Password must be at least 8 characters.</span>
+
+        <!-- Strength bar -->
+        <div class="strength-bar" id="strength-bar" style="display:none;">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="strength-text" id="strength-text" style="display:none;"></div>
+      </div>
+
+      <!-- Already have account -->
+      <div class="auth-link-row">
+        Already have an account?&nbsp;
+        <a href="login.html" id="link-to-login">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-primary" id="signup-btn">SIGN UP</button>
+    </form>
+
+    <!-- Social -->
+    <p class="social-divider">Or sign up with social account</p>
+    <div class="social-row">
+      <a href="/oauth2/authorization/google" class="btn-social" id="google-signup" aria-label="Sign up with Google">
+        <!-- Google SVG -->
+        <svg viewBox="0 0 48 48" width="26" height="26">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          <path fill="none" d="M0 0h48v48H0z"/>
+        </svg>
+      </a>
+      <a href="/oauth2/authorization/facebook" class="btn-social" id="facebook-signup" aria-label="Sign up with Facebook">
+        <!-- Facebook SVG -->
+        <svg viewBox="0 0 48 48" width="26" height="26">
+          <path fill="#3B5998" d="M44 0H4C1.79 0 0 1.79 0 4v40c0 2.21 1.79 4 4 4h21.5V29.5H19V22h6.5v-5.4c0-6.4 3.9-9.9 9.6-9.9 2.7 0 5.6.2 6.3.3v7.3H37c-3.1 0-3.7 1.5-3.7 3.6V22H41l-1 7.5h-6.7V48H44c2.21 0 4-1.79 4-4V4c0-2.21-1.79-4-4-4z"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---- Helpers ---- */
+  const $ = id => document.getElementById(id);
+
+  function showGroup(groupId, state /* 'valid' | 'error' | '' */) {
+    const el = $(groupId);
+    el.classList.remove('is-valid', 'has-error');
+    if (state === 'valid') el.classList.add('is-valid');
+    if (state === 'error') el.classList.add('has-error');
+  }
+
+  function showAlert(type, msg) {
+    $('signup-success').classList.remove('show');
+    $('signup-error').classList.remove('show');
+    if (type === 'success') { $('signup-success').textContent = msg; $('signup-success').classList.add('show'); }
+    if (type === 'error')   { $('signup-error').textContent = msg;   $('signup-error').classList.add('show'); }
+  }
+
+  /* ---- Password visibility toggle ---- */
+  $('toggle-password').addEventListener('click', function () {
+    const input = $('signup-password');
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    $('eye-open').style.display  = isPassword ? 'none' : '';
+    $('eye-closed').style.display = isPassword ? '' : 'none';
+  });
+
+  /* ---- Live validation ---- */
+  $('signup-name').addEventListener('blur', function () {
+    const val = this.value.trim();
+    showGroup('group-name', val.length >= 2 ? 'valid' : 'error');
+  });
+  $('signup-name').addEventListener('input', function () {
+    if (this.value.trim().length >= 2) showGroup('group-name', 'valid');
+  });
+
+  $('signup-email').addEventListener('blur', function () {
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim());
+    showGroup('group-email', valid ? 'valid' : 'error');
+  });
+  $('signup-email').addEventListener('input', function () {
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim())) showGroup('group-email', 'valid');
+  });
+
+  /* ---- Password strength ---- */
+  $('signup-password').addEventListener('input', function () {
+    const pwd = this.value;
+    const bar = $('strength-bar');
+    const txt = $('strength-text');
+
+    if (!pwd) { bar.style.display = 'none'; txt.style.display = 'none'; return; }
+    bar.style.display = 'flex'; txt.style.display = 'block';
+
+    let score = 0;
+    if (pwd.length >= 8)  score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+    bar.className = 'strength-bar';
+    const levels = ['', 'weak', 'fair', 'good', 'strong'];
+    const labels = ['', 'Yếu', 'Trung bình', 'Tốt', 'Rất mạnh'];
+    bar.classList.add(levels[score] || 'weak');
+    txt.textContent = 'Độ mạnh: ' + (labels[score] || 'Yếu');
+  });
+
+  $('signup-password').addEventListener('blur', function () {
+    const valid = this.value.length >= 8;
+    showGroup('group-password', valid ? 'valid' : 'error');
+  });
+
+  /* ---- Form submit ---- */
+  $('signup-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const name     = $('signup-name').value.trim();
+    const email    = $('signup-email').value.trim();
+    const password = $('signup-password').value;
+
+    let ok = true;
+
+    if (name.length < 2) { showGroup('group-name', 'error'); ok = false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showGroup('group-email', 'error'); ok = false; }
+    if (password.length < 8) { showGroup('group-password', 'error'); ok = false; }
+    if (!ok) return;
+
+    const btn = $('signup-btn');
+    btn.classList.add('loading');
+    btn.textContent = 'Đang đăng ký...';
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        showAlert('success', '🎉 Đăng ký thành công! Đang chuyển hướng...');
+        setTimeout(() => { window.location.href = 'login.html'; }, 1800);
+      } else {
+        showAlert('error', data.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+      }
+    } catch (err) {
+      showAlert('error', 'Không thể kết nối server. Vui lòng kiểm tra lại.');
+    } finally {
+      btn.classList.remove('loading');
+      btn.textContent = 'SIGN UP';
+    }
+  });
+})();
+</script>
+</body>
+</html>
