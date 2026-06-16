@@ -231,6 +231,41 @@ public class UserController {
         return ResponseEntity.ok(saved);
     }
 
+    @GetMapping("/addresses")
+    public ResponseEntity<List<CustomerAddress>> getMyAddresses(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
+        getOrCreateCustomer(user);
+        List<CustomerAddress> addresses = addressRepository.findByCustomerUserId(user.getId());
+        return ResponseEntity.ok(addresses);
+    }
+
+    @PostMapping("/addresses")
+    public ResponseEntity<CustomerAddress> addAddress(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody AddressRequest request
+    ) {
+        User user = userDetails.getUser();
+        Customer customer = getOrCreateCustomer(user);
+
+        CustomerAddress address = CustomerAddress.builder()
+                .customer(customer)
+                .addressLine1(valueOrBlank(request.getAddressLine1()))
+                .addressLine2(valueOrBlank(request.getAddressLine2()))
+                .city(valueOrBlank(request.getCity()))
+                .country(valueOrBlank(request.getCountry()))
+                .postalCode(valueOrBlank(request.getPostalCode()))
+                .phoneNumber(valueOrBlank(request.getPhoneNumber()))
+                .dialCode(valueOrBlank(request.getDialCode()))
+                .build();
+
+        CustomerAddress saved = addressRepository.save(address);
+        return ResponseEntity.ok(saved);
+    }
+
+    private String valueOrBlank(String value) {
+        return value == null ? "" : value.trim();
+    }
+
     @PostMapping("/simulate/order")
     public ResponseEntity<Void> simulateOrder(@AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userDetails.getUser();

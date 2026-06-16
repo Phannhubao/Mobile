@@ -2,9 +2,12 @@ import 'dart:math' show Random;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../models/checkout_models.dart';
 import '../providers/cart_provider.dart';
 import '../services/auth_service.dart';
 import 'order_success_screen.dart';
+import 'payment_methods_screen.dart';
+import 'shipping_addresses_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -21,12 +24,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String _cardNumber = '3947';
   String _cardType = 'MasterCard';
   List<Map<String, dynamic>> _userCards = [];
+  List<PaymentCardOption> _paymentCards = PaymentCardOption.defaults();
+  List<ShippingAddressOption> _shippingAddresses =
+      ShippingAddressOption.defaults();
+  ShippingAddressOption _selectedAddress =
+      ShippingAddressOption.defaults().first;
+  PaymentCardOption _selectedPaymentCard = PaymentCardOption.defaults().first;
   bool _loadingCards = false;
+  bool _loadingAddresses = false;
 
   @override
   void initState() {
     super.initState();
+    _applyShippingAddress(_selectedAddress);
+    _applyPaymentCard(_selectedPaymentCard);
     _loadUserCards();
+    _loadUserAddresses();
   }
 
   Future<void> _loadUserCards() async {
@@ -35,9 +48,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     });
     try {
       final cards = await AuthService().getUserCards();
+      final mappedCards =
+          cards.map((card) => PaymentCardOption.fromJson(card)).toList();
       setState(() {
         _userCards = cards;
-        if (_userCards.isNotEmpty) {
+        if (mappedCards.isNotEmpty) {
+          _paymentCards = mappedCards;
+          if (!_paymentCards.any((card) =>
+              card.cardType == _selectedPaymentCard.cardType &&
+              card.lastFour == _selectedPaymentCard.lastFour)) {
+            _selectedPaymentCard = _paymentCards.first;
+          }
+          _applyPaymentCard(_selectedPaymentCard);
+        } else if (_userCards.isNotEmpty) {
           bool found = false;
           for (var c in _userCards) {
             if (c['lastFour'] == _cardNumber && c['cardType'] == _cardType) {
@@ -60,6 +83,97 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+  Future<void> _loadUserAddresses() async {
+    setState(() {
+      _loadingAddresses = true;
+    });
+    try {
+      final addresses = await AuthService().getUserAddresses();
+      final mappedAddresses = addresses
+          .map((address) => ShippingAddressOption.fromJson(
+                address,
+                fallbackName: _shippingName,
+              ))
+          .where((address) => address.addressLine1.trim().isNotEmpty)
+          .toList();
+      if (!mounted) return;
+      setState(() {
+        if (mappedAddresses.isNotEmpty) {
+          _shippingAddresses = mappedAddresses;
+          if (!_shippingAddresses.any(
+            (address) => address.id == _selectedAddress.id,
+          )) {
+            _selectedAddress = _shippingAddresses.first;
+          }
+          _applyShippingAddress(_selectedAddress);
+        }
+      });
+    } catch (e) {
+      print('>>> Error loading user addresses: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loadingAddresses = false;
+        });
+      }
+    }
+  }
+
+  void _applyShippingAddress(ShippingAddressOption address) {
+    _selectedAddress = address;
+    _shippingName = address.name;
+    _shippingAddress = address.checkoutText;
+  }
+
+  void _applyPaymentCard(PaymentCardOption card) {
+    _selectedPaymentCard = card;
+    _cardType = card.cardType;
+    _cardNumber = card.lastFour;
+  }
+
+  Future<void> _openShippingAddresses() async {
+    final selected = await Navigator.push<ShippingAddressOption>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ShippingAddressesScreen(
+          addresses: _shippingAddresses,
+          selectedAddress: _selectedAddress,
+        ),
+      ),
+    );
+    if (selected == null || !mounted) return;
+    setState(() {
+      if (!_shippingAddresses.any((address) => address.id == selected.id)) {
+        _shippingAddresses.add(selected);
+      }
+      _applyShippingAddress(selected);
+    });
+    _loadUserAddresses();
+  }
+
+  Future<void> _openPaymentMethods() async {
+    final selected = await Navigator.push<PaymentCardOption>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PaymentMethodsScreen(
+          cards: _paymentCards,
+          selectedCard: _selectedPaymentCard,
+        ),
+      ),
+    );
+    if (selected == null || !mounted) return;
+    setState(() {
+      if (!_paymentCards.any((card) =>
+          card.cardType == selected.cardType &&
+          card.lastFour == selected.lastFour)) {
+        _paymentCards.add(selected);
+      }
+      _applyPaymentCard(selected);
+    });
+    _loadUserCards();
+  }
+
+  // ignore: unused_element
   void _showEditAddressBottomSheet(BuildContext context, double scale) {
     final nameController = TextEditingController(text: _shippingName);
     final addressController = TextEditingController(text: _shippingAddress);
@@ -186,6 +300,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // ignore: unused_element
   void _showEditPaymentBottomSheet(BuildContext context, double scale) {
     final cardController = TextEditingController();
     String selectedCardType = 'MasterCard';
@@ -605,8 +720,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () =>
-                                    _showEditAddressBottomSheet(context, scale),
+                                onTap: _loadingAddresses
+                                    ? null
+                                    : _openShippingAddresses,
                                 child: Text(
                                   'Change',
                                   style: GoogleFonts.inter(
@@ -646,8 +762,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () =>
-                              _showEditPaymentBottomSheet(context, scale),
+                          onTap: _loadingCards ? null : _openPaymentMethods,
                           child: Text(
                             'Change',
                             style: GoogleFonts.inter(

@@ -4,46 +4,43 @@ Flutter client for the Phan Nhu Bao Spring Boot backend.
 
 ## API URL
 
-The app supports both front doors to the same backend:
+The app chooses exactly one backend front door at build/run time:
 
-- `API_MODE=ngrok` uses the ngrok URL and is the default.
-- `API_MODE=local` uses `http://localhost:8080`.
-- `API_BASE_URL` overrides both modes with any explicit URL.
+- `API_MODE=1` or `API_MODE=local` uses localhost and is the default.
+- `API_MODE=2` or `API_MODE=ngrok` uses the ngrok URL.
 
 Run through local port `8080`:
 
 ```powershell
 adb reverse tcp:8080 tcp:8080
-flutter run --dart-define=API_MODE=local
+flutter run --dart-define=API_MODE=1
 ```
 
 For an Android emulator without `adb reverse`, override the local URL:
 
 ```powershell
-flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080
+flutter run --dart-define=API_MODE=1 --dart-define=LOCAL_BASE_URL=http://10.0.2.2:8080
 ```
 
 Run through the current ngrok tunnel:
 
 ```powershell
-flutter run --dart-define=API_MODE=ngrok --dart-define=NGROK_BASE_URL=https://your-id.ngrok-free.app
+flutter run --dart-define=API_MODE=2 --dart-define=NGROK_BASE_URL=https://your-id.ngrok-free.app
 ```
 
 Both URLs reach the backend on port `8080`, so they use the same PostgreSQL
 database and the same `wishlist` table.
 
-Production web builds served by Spring Boot automatically use the backend URL
-configured at build time.
+Production web builds use the same single mode choice.
 
 ```powershell
-flutter build web --dart-define=API_BASE_URL=https://your-backend.example.com
+flutter build web --dart-define=API_MODE=2 --dart-define=NGROK_BASE_URL=https://your-backend.example.com
 ```
 
-Firebase Hosting must always be built with `API_BASE_URL`; otherwise Firebase's
-SPA rewrite returns `index.html` for API requests:
+Firebase Hosting should normally use ngrok or another HTTPS backend URL:
 
 ```powershell
-flutter build web --dart-define=API_BASE_URL=https://your-id.ngrok-free.app
+flutter build web --dart-define=API_MODE=2 --dart-define=NGROK_BASE_URL=https://your-id.ngrok-free.app
 firebase deploy --only hosting
 ```
 
@@ -60,11 +57,11 @@ ngrok http 8080
 Run Flutter with the HTTPS forwarding URL shown by ngrok:
 
 ```powershell
-flutter run --dart-define=API_MODE=ngrok --dart-define=NGROK_BASE_URL=https://your-id.ngrok-free.app
+flutter run --dart-define=API_MODE=2 --dart-define=NGROK_BASE_URL=https://your-id.ngrok-free.app
 ```
 
 Free ngrok URLs normally change whenever ngrok restarts, so pass the current
-URL with `API_BASE_URL` instead of storing it in source code.
+URL with `NGROK_BASE_URL` instead of storing it in source code.
 
 For social login, also start the backend with the current callback URL:
 

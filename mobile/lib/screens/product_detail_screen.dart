@@ -80,6 +80,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     }
   }
 
+  Future<void> _addProductToCart(
+    String size,
+    String color,
+    String successMessage,
+  ) async {
+    final cartProvider = context.read<CartProvider>();
+    final success = await cartProvider.addItem(widget.product, size, color);
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(success
+            ? successMessage
+            : cartProvider.errorMessage ??
+                'Không thể thêm sản phẩm vào giỏ hàng'),
+        backgroundColor: success ? Colors.green : AppTheme.error,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final scale = (MediaQuery.of(context).size.width / 375).clamp(0.5, 1.5);
@@ -574,7 +594,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     child: SizedBox(
                       height: 48 * scale,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_selectedSize == 'Size') {
                             _showSizeBottomSheet(context);
                             return;
@@ -582,14 +602,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           final color = _selectedColor == 'Color'
                               ? 'Black'
                               : _selectedColor;
-                          Provider.of<CartProvider>(context, listen: false)
-                              .addItem(widget.product, _selectedSize, color);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  'Added ${widget.product.productName} (Size $_selectedSize) to bag!'),
-                              backgroundColor: Colors.green,
-                            ),
+                          await _addProductToCart(
+                            _selectedSize,
+                            color,
+                            'Added ${widget.product.productName} (Size $_selectedSize) to bag!',
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -787,7 +803,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       width: double.infinity,
                       height: 48 * scale,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(context);
                           if (_selectedSize == 'Size') {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -802,9 +818,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           final color = _selectedColor == 'Color'
                               ? 'Black'
                               : _selectedColor;
-                          Provider.of<CartProvider>(context, listen: false)
-                              .addItem(widget.product, _selectedSize, color);
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          final cartProvider =
+                              this.context.read<CartProvider>();
+                          final success = await cartProvider.addItem(
+                              widget.product, _selectedSize, color);
+                          if (!mounted) return;
+                          if (!success) {
+                            ScaffoldMessenger.of(this.context).showSnackBar(
+                              SnackBar(
+                                content: Text(cartProvider.errorMessage ??
+                                    'Không thể thêm sản phẩm vào giỏ hàng'),
+                                backgroundColor: AppTheme.error,
+                              ),
+                            );
+                            return;
+                          }
+                          ScaffoldMessenger.of(this.context).showSnackBar(
                             SnackBar(
                               content: Text(
                                   'Đã thêm ${widget.product.productName} (Size $_selectedSize) vào giỏ hàng!'),
@@ -1178,7 +1207,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       width: double.infinity,
                       height: 48 * scale,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(context);
                           if (_selectedColor == 'Color') {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -1192,9 +1221,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           }
                           final size =
                               _selectedSize == 'Size' ? 'M' : _selectedSize;
-                          Provider.of<CartProvider>(context, listen: false)
-                              .addItem(widget.product, size, _selectedColor);
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          final cartProvider =
+                              this.context.read<CartProvider>();
+                          final success = await cartProvider.addItem(
+                              widget.product, size, _selectedColor);
+                          if (!mounted) return;
+                          if (!success) {
+                            ScaffoldMessenger.of(this.context).showSnackBar(
+                              SnackBar(
+                                content: Text(cartProvider.errorMessage ??
+                                    'Không thể thêm sản phẩm vào giỏ hàng'),
+                                backgroundColor: AppTheme.error,
+                              ),
+                            );
+                            return;
+                          }
+                          ScaffoldMessenger.of(this.context).showSnackBar(
                             SnackBar(
                               content: Text(
                                   'Đã thêm ${widget.product.productName} (Color $_selectedColor) vào giỏ hàng!'),

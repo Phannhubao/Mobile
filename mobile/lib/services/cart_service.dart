@@ -21,6 +21,14 @@ class CartService {
     };
   }
 
+  Future<Map<String, String>> _requiredHeaders() async {
+    final headers = await _headers();
+    if (headers == null) {
+      throw Exception('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.');
+    }
+    return headers;
+  }
+
   Future<List<Map<String, dynamic>>?> getCart() async {
     try {
       final headers = await _headers();
@@ -39,15 +47,14 @@ class CartService {
     }
   }
 
-  Future<Map<String, dynamic>?> addItem({
+  Future<Map<String, dynamic>> addItem({
     required String productId,
     required String selectedSize,
     required String selectedColor,
     int quantity = 1,
   }) async {
     try {
-      final headers = await _headers();
-      if (headers == null) return null;
+      final headers = await _requiredHeaders();
       final response = await http.post(
         Uri.parse('${AppConstants.baseUrl}/api/cart'),
         headers: headers,
@@ -58,13 +65,29 @@ class CartService {
           'quantity': quantity,
         }),
       );
-      if (response.statusCode != 200) return null;
+      if (response.statusCode != 200) {
+        throw Exception(
+          _responseMessage(response, 'Không thể thêm sản phẩm vào giỏ hàng'),
+        );
+      }
       return jsonDecode(utf8.decode(response.bodyBytes))
           as Map<String, dynamic>;
     } catch (e) {
       print('Error adding cart item: $e');
-      return null;
+      rethrow;
     }
+  }
+
+  String _responseMessage(http.Response response, String fallback) {
+    try {
+      final body = jsonDecode(utf8.decode(response.bodyBytes));
+      if (body is Map && body['message'] != null) {
+        return body['message'].toString();
+      }
+    } catch (_) {
+      // Keep the fallback below when the backend returns non-JSON content.
+    }
+    return '$fallback (HTTP ${response.statusCode})';
   }
 
   Future<Map<String, dynamic>?> updateQuantity(

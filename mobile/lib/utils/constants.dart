@@ -1,8 +1,6 @@
 class AppConstants {
   static const String _apiMode =
-      String.fromEnvironment('API_MODE', defaultValue: 'ngrok');
-  static const String _configuredBaseUrl =
-      String.fromEnvironment('API_BASE_URL');
+      String.fromEnvironment('API_MODE', defaultValue: '1');
   static const String _localBaseUrl = String.fromEnvironment(
     'LOCAL_BASE_URL',
     defaultValue: 'http://localhost:8080',
@@ -13,13 +11,16 @@ class AppConstants {
   );
 
   static String get baseUrl {
-    if (_configuredBaseUrl.isNotEmpty) {
-      return _withoutTrailingSlash(_configuredBaseUrl);
+    switch (_apiMode.toLowerCase()) {
+      case '2':
+      case 'ngrok':
+        return _withoutTrailingSlash(_ngrokBaseUrl);
+      case '1':
+      case 'local':
+      case 'localhost':
+      default:
+        return _withoutTrailingSlash(_localBaseUrl);
     }
-
-    return _withoutTrailingSlash(
-      _apiMode.toLowerCase() == 'local' ? _localBaseUrl : _ngrokBaseUrl,
-    );
   }
 
   static Map<String, String> get getHeaders {

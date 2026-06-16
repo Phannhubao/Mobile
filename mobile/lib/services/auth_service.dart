@@ -57,17 +57,20 @@ class AuthService {
 
   Future<AuthResponse> login(String email, String password) async {
     try {
-      final response = await _httpClient.post(
-        Uri.parse('${AppConstants.baseUrl}${AppConstants.loginEndpoint}'),
-        headers: {
-          'Content-Type': 'application/json',
-          ...AppConstants.getHeaders,
-        },
-        body: jsonEncode({'email': email, 'password': password}),
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () => throw Exception('Hết thời gian chờ - Kiểm tra kết nối mạng'),
-      );
+      final response = await _httpClient
+          .post(
+            Uri.parse('${AppConstants.baseUrl}${AppConstants.loginEndpoint}'),
+            headers: {
+              'Content-Type': 'application/json',
+              ...AppConstants.getHeaders,
+            },
+            body: jsonEncode({'email': email, 'password': password}),
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () =>
+                throw Exception('Hết thời gian chờ - Kiểm tra kết nối mạng'),
+          );
 
       if (response.statusCode == 200) {
         try {
@@ -81,17 +84,18 @@ class AuthService {
         // Cố gắng parse lỗi từ JSON, nếu không thì hiển thị HTML/plain text
         try {
           final body = jsonDecode(response.body);
-          throw Exception(body['message'] ?? 'Đăng nhập thất bại (HTTP ${response.statusCode})');
+          throw Exception(body['message'] ??
+              'Đăng nhập thất bại (HTTP ${response.statusCode})');
         } catch (e) {
           // Nếu không parse được JSON (HTML response), trả về error với status code
-          throw Exception('Đăng nhập thất bại - ${response.statusCode}. Kiểm tra backend URL ngrok của bạn.');
+          throw Exception(
+              'Đăng nhập thất bại - ${response.statusCode}. Kiểm tra backend URL của bạn.');
         }
       }
     } catch (e) {
       if (e.toString().contains('certificate') ||
           e.toString().contains('HandshakeException')) {
-        throw Exception(
-            'Lỗi kết nối SSL - Hãy kiểm tra URL ngrok của bạn');
+        throw Exception('Lỗi kết nối SSL - Hãy kiểm tra backend URL của bạn');
       }
       rethrow;
     }
@@ -99,21 +103,25 @@ class AuthService {
 
   Future<void> register(String name, String email, String password) async {
     try {
-      final response = await _httpClient.post(
-        Uri.parse('${AppConstants.baseUrl}${AppConstants.registerEndpoint}'),
-        headers: {
-          'Content-Type': 'application/json',
-          ...AppConstants.getHeaders,
-        },
-        body: jsonEncode({
-          'name': name,
-          'email': email,
-          'password': password,
-        }),
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () => throw Exception('Hết thời gian chờ - Kiểm tra kết nối mạng'),
-      );
+      final response = await _httpClient
+          .post(
+            Uri.parse(
+                '${AppConstants.baseUrl}${AppConstants.registerEndpoint}'),
+            headers: {
+              'Content-Type': 'application/json',
+              ...AppConstants.getHeaders,
+            },
+            body: jsonEncode({
+              'name': name,
+              'email': email,
+              'password': password,
+            }),
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () =>
+                throw Exception('Hết thời gian chờ - Kiểm tra kết nối mạng'),
+          );
 
       if (response.statusCode != 200) {
         final body = jsonDecode(response.body);
@@ -122,8 +130,7 @@ class AuthService {
     } catch (e) {
       if (e.toString().contains('certificate') ||
           e.toString().contains('HandshakeException')) {
-        throw Exception(
-            'Lỗi kết nối SSL - Hãy kiểm tra URL ngrok của bạn');
+        throw Exception('Lỗi kết nối SSL - Hãy kiểm tra backend URL của bạn');
       }
       rethrow;
     }
@@ -243,6 +250,55 @@ class AuthService {
     );
     if (response.statusCode != 200) {
       throw Exception('Không thể thêm thẻ thanh toán');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUserAddresses() async {
+    final token = await getAccessToken();
+    final response = await _httpClient.get(
+      Uri.parse('${AppConstants.baseUrl}/api/users/addresses'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+        ...AppConstants.getHeaders,
+      },
+    );
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      return List<Map<String, dynamic>>.from(data);
+    }
+    return [];
+  }
+
+  Future<void> addUserAddress({
+    required String addressLine1,
+    String addressLine2 = '',
+    required String city,
+    required String country,
+    required String postalCode,
+    String phoneNumber = '',
+    String dialCode = '',
+  }) async {
+    final token = await getAccessToken();
+    final response = await _httpClient.post(
+      Uri.parse('${AppConstants.baseUrl}/api/users/addresses'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+        ...AppConstants.getHeaders,
+      },
+      body: jsonEncode({
+        'addressLine1': addressLine1,
+        'addressLine2': addressLine2,
+        'city': city,
+        'country': country,
+        'postalCode': postalCode,
+        'phoneNumber': phoneNumber,
+        'dialCode': dialCode,
+      }),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Không thể thêm địa chỉ giao hàng');
     }
   }
 

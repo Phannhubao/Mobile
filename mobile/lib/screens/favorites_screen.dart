@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../models/product.dart';
 import '../providers/favorites_provider.dart';
 import '../providers/cart_provider.dart';
 import '../utils/constants.dart';
@@ -18,6 +19,27 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   String _selectedCategory = 'All';
   String _sortLabel = 'Price: lowest to high';
   bool _sortAscending = true;
+
+  Future<void> _addProductToCart(
+    Product product,
+    String size,
+    String color,
+  ) async {
+    final cartProvider = context.read<CartProvider>();
+    final success = await cartProvider.addItem(product, size, color);
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(success
+            ? 'Added ${product.productName} to bag!'
+            : cartProvider.errorMessage ??
+                'Không thể thêm sản phẩm vào giỏ hàng'),
+        backgroundColor: success ? Colors.green : Colors.red,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   static const List<String> _categories = [
     'All',
@@ -509,23 +531,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   child: GestureDetector(
                     onTap: isSoldOut
                         ? null
-                        : () {
+                        : () async {
                             final size = item.selectedSize.isEmpty
                                 ? 'M'
                                 : item.selectedSize;
                             final color = item.selectedColor.isEmpty
                                 ? 'Black'
                                 : item.selectedColor;
-                            Provider.of<CartProvider>(context, listen: false)
-                                .addItem(product, size, color);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Added ${product.productName} to bag!'),
-                                backgroundColor: Colors.green,
-                                duration: const Duration(seconds: 2),
-                              ),
-                            );
+                            await _addProductToCart(product, size, color);
                           },
                     child: Container(
                       width: 36 * scale,
@@ -695,24 +708,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       child: GestureDetector(
                         onTap: isSoldOut
                             ? null
-                            : () {
+                            : () async {
                                 final size = item.selectedSize.isEmpty
                                     ? 'M'
                                     : item.selectedSize;
                                 final color = item.selectedColor.isEmpty
                                     ? 'Black'
                                     : item.selectedColor;
-                                Provider.of<CartProvider>(context,
-                                        listen: false)
-                                    .addItem(product, size, color);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        'Added ${product.productName} to bag!'),
-                                    backgroundColor: Colors.green,
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
+                                await _addProductToCart(product, size, color);
                               },
                         child: Container(
                           width: 34 * scale,

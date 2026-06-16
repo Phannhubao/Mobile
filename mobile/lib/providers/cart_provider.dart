@@ -41,10 +41,12 @@ class CartProvider extends ChangeNotifier {
   final CartService _cartService = CartService();
   PromoCode? _activePromoCode;
   bool _isLoading = false;
+  String? _errorMessage;
 
   List<CartItem> get items => List.unmodifiable(_items);
   PromoCode? get activePromoCode => _activePromoCode;
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
 
   int get itemCount => _items.fold(0, (sum, item) => sum + item.quantity);
 
@@ -76,7 +78,8 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addItem(Product product, String size, String color) async {
+  Future<bool> addItem(Product product, String size, String color) async {
+    _errorMessage = null;
     final existingIndex = _items.indexWhere((item) =>
         item.product.id == product.id &&
         item.selectedSize == size &&
@@ -94,22 +97,28 @@ class CartProvider extends ChangeNotifier {
     }
     notifyListeners();
 
-    final response = await _cartService.addItem(
-      productId: product.id,
-      selectedSize: size,
-      selectedColor: color,
-    );
-    if (response != null) {
+    try {
+      final response = await _cartService.addItem(
+        productId: product.id,
+        selectedSize: size,
+        selectedColor: color,
+      );
       _replaceFromResponse(response);
-    } else if (existingIndex >= 0) {
-      _items[existingIndex].quantity--;
-    } else {
-      _items.removeWhere((item) =>
-          item.product.id == product.id &&
-          item.selectedSize == size &&
-          item.selectedColor == color);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = _cleanError(e);
+      if (existingIndex >= 0) {
+        _items[existingIndex].quantity--;
+      } else {
+        _items.removeWhere((item) =>
+            item.product.id == product.id &&
+            item.selectedSize == size &&
+            item.selectedColor == color);
+      }
+      notifyListeners();
+      return false;
     }
-    notifyListeners();
   }
 
   Future<void> removeItem(String productId, String size, String color) async {
@@ -137,14 +146,15 @@ class CartProvider extends ChangeNotifier {
       _items[index].quantity++;
       notifyListeners();
 
-      final response = await _cartService.addItem(
-        productId: productId,
-        selectedSize: size,
-        selectedColor: color,
-      );
-      if (response != null) {
+      try {
+        final response = await _cartService.addItem(
+          productId: productId,
+          selectedSize: size,
+          selectedColor: color,
+        );
         _replaceFromResponse(response);
-      } else {
+      } catch (e) {
+        _errorMessage = _cleanError(e);
         _items[index].quantity--;
       }
       notifyListeners();
@@ -225,5 +235,9 @@ class CartProvider extends ChangeNotifier {
     } else {
       _items.add(serverItem);
     }
+  }
+
+  String _cleanError(Object error) {
+    return error.toString().replaceFirst('Exception: ', '');
   }
 }
