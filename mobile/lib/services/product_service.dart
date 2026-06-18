@@ -8,6 +8,32 @@ import '../utils/constants.dart';
 import '../models/rating_summary.dart';
 
 class ProductService {
+  Future<Map<String, String>> _authorizedHeaders() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(AppConstants.accessTokenKey);
+    if (token == null || token.isEmpty) {
+      throw Exception('Please sign in with an admin account');
+    }
+
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+      ...AppConstants.getHeaders,
+    };
+  }
+
+  String _responseMessage(http.Response response, String fallback) {
+    try {
+      final body = jsonDecode(utf8.decode(response.bodyBytes));
+      if (body is Map<String, dynamic>) {
+        return body['error']?.toString() ??
+            body['message']?.toString() ??
+            (body.isNotEmpty ? body.values.first.toString() : fallback);
+      }
+    } catch (_) {}
+    return fallback;
+  }
+
   Future<RatingSummary?> getRatingSummary(String productId) async {
     try {
       final response = await http.get(
@@ -151,48 +177,42 @@ class ProductService {
   Future<Product> createProduct(Map<String, dynamic> data) async {
     final response = await http.post(
       Uri.parse('${AppConstants.baseUrl}/api/products'),
-      headers: AppConstants.jsonHeaders,
+      headers: await _authorizedHeaders(),
       body: jsonEncode(data),
     );
     if (response.statusCode == 200) {
       return Product.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
-      final decoded = utf8.decode(response.bodyBytes);
-      String errMsg = 'Thêm sản phẩm thất bại';
-      try {
-        final body = jsonDecode(decoded);
-        errMsg = body['message'] ?? errMsg;
-      } catch (_) {}
-      throw Exception(errMsg);
+      throw Exception(
+        _responseMessage(response, 'Failed to create product'),
+      );
     }
   }
 
   Future<Product> updateProduct(String id, Map<String, dynamic> data) async {
     final response = await http.put(
       Uri.parse('${AppConstants.baseUrl}/api/products/$id'),
-      headers: AppConstants.jsonHeaders,
+      headers: await _authorizedHeaders(),
       body: jsonEncode(data),
     );
     if (response.statusCode == 200) {
       return Product.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
-      final decoded = utf8.decode(response.bodyBytes);
-      String errMsg = 'Cập nhật sản phẩm thất bại';
-      try {
-        final body = jsonDecode(decoded);
-        errMsg = body['message'] ?? errMsg;
-      } catch (_) {}
-      throw Exception(errMsg);
+      throw Exception(
+        _responseMessage(response, 'Failed to update product'),
+      );
     }
   }
 
   Future<void> deleteProduct(String id) async {
     final response = await http.delete(
       Uri.parse('${AppConstants.baseUrl}/api/products/$id'),
-      headers: AppConstants.jsonHeaders,
+      headers: await _authorizedHeaders(),
     );
     if (response.statusCode != 200) {
-      throw Exception('Xóa sản phẩm thất bại');
+      throw Exception(
+        _responseMessage(response, 'Failed to delete product'),
+      );
     }
   }
 
@@ -215,7 +235,8 @@ class ProductService {
     }
   }
 
-  Future<String?> createReview(String productId, int rating, String content) async {
+  Future<String?> createReview(
+      String productId, int rating, String content) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString(AppConstants.accessTokenKey);

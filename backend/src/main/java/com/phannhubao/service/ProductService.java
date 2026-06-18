@@ -31,17 +31,7 @@ public class ProductService {
     }
 
     public List<Product> getNewProducts() {
-        List<Product> newProducts = productRepository.findByTagsTagNameIgnoreCase("NEW");
-        List<Product> nonSaleNew = newProducts.stream()
-                .filter(p -> p.getComparePrice() == null || p.getComparePrice() <= p.getSalePrice())
-                .toList();
-        if (nonSaleNew.isEmpty()) {
-            List<Product> allProducts = productRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
-            return allProducts.stream()
-                    .filter(p -> p.getComparePrice() == null || p.getComparePrice() <= p.getSalePrice())
-                    .toList();
-        }
-        return nonSaleNew;
+        return productRepository.findByTagsTagNameIgnoreCase("NEW");
     }
 
     public List<Product> getAllProducts() {

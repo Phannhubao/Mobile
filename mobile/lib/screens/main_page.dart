@@ -204,14 +204,10 @@ class _MainPageState extends State<MainPage> {
       final news = await _productService.getNewProducts();
       final cats = await _productService.getCategories();
 
-      // Exclude products that are on sale from the new products list
-      final saleIds = sales.map((p) => p.id).toSet();
-      final uniqueNews = news.where((p) => !saleIds.contains(p.id)).toList();
-
       if (!mounted) return;
       setState(() {
         _saleProducts = sales;
-        _newProducts = uniqueNews;
+        _newProducts = news;
         _backendCategories = cats;
         _isLoading = false;
         _isCategoriesLoading = false;

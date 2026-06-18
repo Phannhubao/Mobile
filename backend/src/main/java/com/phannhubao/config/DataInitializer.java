@@ -82,7 +82,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("White", "Black", "Beige"),
                                 Set.of(tagWomen, tagClothes, tagNew),
-                                catClothes, tops, catNew);
+                                tops, catNew);
 
                 seedProduct("Ribbed Tank Top", "H&M", "ribbed-tank-top", "/images/women/tops_2.jpg",
                                 15.0, 20.0, 70,
@@ -92,7 +92,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M"),
                                 Set.of("Beige", "Brown", "Black"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, tops);
+                                tops);
 
                 seedProduct("Summer Crop Top", "Zara", "summer-crop-top", "/images/women/tops_3.jpg",
                                 22.0, 30.0, 45,
@@ -102,7 +102,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M"),
                                 Set.of("Pink", "White", "Black"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, tops);
+                                tops);
 
                 seedProduct("Off Shoulder Top", "Shein", "off-shoulder-top", "/images/women/tops_4.jpg",
                                 18.0, 24.0, 50,
@@ -112,7 +112,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Cream", "White", "Blue"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, tops);
+                                tops);
 
                 seedProduct("Lace Trim Cami Top", "Pull&Bear", "lace-trim-cami-top", "/images/women/tops_5.jpg",
                                 20.0, 28.0, 40,
@@ -122,7 +122,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M"),
                                 Set.of("Black", "White", "Red"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, tops, catNew);
+                                tops, catNew);
 
                 // =========================
                 // SHIRTS & BLOUSES
@@ -135,7 +135,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("White", "Beige"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, shirts);
+                                shirts);
 
                 seedProduct("Silk Satin Shirt", "Zara", "silk-satin-shirt", "/images/women/shirt_2.jpg",
                                 45.0, 59.0, 35,
@@ -145,7 +145,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Champagne", "Black", "Navy"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, shirts, catNew);
+                                shirts, catNew);
 
                 seedProduct("Floral Chiffon Blouse", "Dorothy Perkins", "floral-chiffon-blouse",
                                 "/images/women/shirt_3.jpg",
@@ -156,7 +156,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Pink", "White", "Blue"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, shirts);
+                                shirts);
 
                 seedProduct("Striped Casual Shirt", "H&M", "striped-casual-shirt", "/images/women/shirt_4.jpg",
                                 27.0, 35.0, 50,
@@ -166,7 +166,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L", "XL"),
                                 Set.of("Blue", "White"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, shirts);
+                                shirts);
 
                 seedProduct("Bow Tie Blouse", "Mango", "bow-tie-blouse", "/images/women/shirt_5.jpg",
                                 34.0, 46.0, 30,
@@ -176,7 +176,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M"),
                                 Set.of("Ivory", "Black", "Pink"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, shirts, catNew);
+                                shirts, catNew);
 
                 // =========================
                 // CARDIGANS & SWEATERS
@@ -189,7 +189,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Beige", "Brown", "White"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, cardigans);
+                                cardigans);
 
                 seedProduct("Cropped Cardigan", "Zara", "cropped-cardigan", "/images/women/cardigan_2.jpg",
                                 36.0, 49.0, 38,
@@ -199,7 +199,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M"),
                                 Set.of("Pink", "White", "Black"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, cardigans, catNew);
+                                cardigans, catNew);
 
                 seedProduct("V Neck Sweater", "H&M", "v-neck-sweater", "/images/women/cardigan_3.jpg",
                                 42.0, 58.0, 45,
@@ -209,7 +209,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L", "XL"),
                                 Set.of("Grey", "Navy", "Cream"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, cardigans);
+                                cardigans);
 
                 seedProduct("Button Knit Cardigan", "Mango", "button-knit-cardigan", "/images/women/cardigan_4.jpg",
                                 44.0, 60.0, 32,
@@ -219,7 +219,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Cream", "Blue", "Brown"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, cardigans);
+                                cardigans);
 
                 seedProduct("Oversize Sweater", "Pull&Bear", "oversize-sweater", "/images/women/cardigan_5.jpg",
                                 49.0, 69.0, 36,
@@ -229,7 +229,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L", "XL"),
                                 Set.of("Navy", "Grey", "Black"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, cardigans, catNew);
+                                cardigans, catNew);
 
                 // =========================
                 // KNITWEAR
@@ -242,7 +242,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Black", "White", "Brown"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, knitwear);
+                                knitwear);
 
                 seedProduct("Cable Knit Sweater", "Mango", "cable-knit-sweater", "/images/women/knit_2.jpg",
                                 55.0, 75.0, 28,
@@ -252,7 +252,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Cream", "Beige", "Grey"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, knitwear, catNew);
+                                knitwear, catNew);
 
                 seedProduct("Knit Polo Top", "H&M", "knit-polo-top", "/images/women/knit_3.jpg",
                                 37.0, 49.0, 35,
@@ -262,7 +262,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Green", "White", "Navy"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, knitwear);
+                                knitwear);
 
                 seedProduct("Sleeveless Knit Vest", "Pull&Bear", "sleeveless-knit-vest", "/images/women/knit_4.jpg",
                                 33.0, 45.0, 40,
@@ -272,7 +272,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Beige", "Brown", "Black"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, knitwear);
+                                knitwear);
 
                 seedProduct("Turtleneck Knit Sweater", "Uniqlo", "turtleneck-knit-sweater", "/images/women/knit_5.jpg",
                                 50.0, 65.0, 34,
@@ -282,7 +282,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Grey", "Black", "Ivory"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, knitwear, catNew);
+                                knitwear, catNew);
 
                 // =========================
                 // BLAZERS
@@ -295,7 +295,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Black", "Grey"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, blazers);
+                                blazers);
 
                 seedProduct("Beige Tailored Blazer", "Zara", "beige-tailored-blazer", "/images/women/blazer_2.jpg",
                                 89.0, 120.0, 20,
@@ -305,7 +305,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Beige", "White", "Brown"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, blazers, catNew);
+                                blazers, catNew);
 
                 seedProduct("Oversize Office Blazer", "H&M", "oversize-office-blazer", "/images/women/blazer_3.jpg",
                                 69.0, 89.0, 30,
@@ -315,7 +315,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L", "XL"),
                                 Set.of("Grey", "Black", "Navy"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, blazers);
+                                blazers);
 
                 seedProduct("Cropped Blazer", "Pull&Bear", "cropped-blazer", "/images/women/blazer_4.jpg",
                                 72.0, 95.0, 22,
@@ -325,7 +325,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M"),
                                 Set.of("White", "Black", "Pink"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, blazers);
+                                blazers);
 
                 seedProduct("Plaid Blazer", "Dorothy Perkins", "plaid-blazer", "/images/women/blazer_5.jpg",
                                 83.0, 110.0, 18,
@@ -335,7 +335,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Brown", "Grey", "Beige"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, blazers, catNew);
+                                blazers, catNew);
 
                 // =========================
                 // OUTERWEAR
@@ -348,7 +348,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Khaki", "Beige", "Black"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, outerwear);
+                                outerwear);
 
                 seedProduct("Puffer Jacket", "Zara", "puffer-jacket-women", "/images/women/outerwear_2.jpg",
                                 95.0, 130.0, 25,
@@ -358,7 +358,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("White", "Black", "Pink"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, outerwear);
+                                outerwear);
 
                 seedProduct("Denim Jacket Women", "H&M", "denim-jacket-women", "/images/women/outerwear_3.jpg",
                                 65.0, 85.0, 40,
@@ -368,7 +368,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L", "XL"),
                                 Set.of("Blue", "Light Blue"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, outerwear, catNew);
+                                outerwear, catNew);
 
                 seedProduct("Faux Leather Jacket", "Pull&Bear", "faux-leather-jacket", "/images/women/outerwear_4.jpg",
                                 105.0, 140.0, 20,
@@ -378,7 +378,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Black", "Brown"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, outerwear);
+                                outerwear);
 
                 seedProduct("Wool Blend Coat", "Uniqlo", "wool-blend-coat", "/images/women/outerwear_5.jpg",
                                 135.0, 170.0, 16,
@@ -388,7 +388,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Camel", "Grey", "Black"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, outerwear, catNew);
+                                outerwear, catNew);
 
                 // =========================
                 // PANTS
@@ -401,7 +401,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Black", "Beige", "Grey"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, pants);
+                                pants);
 
                 seedProduct("Wide Leg Pants", "Zara", "wide-leg-pants", "/images/women/pants_2.jpg",
                                 52.0, 70.0, 38,
@@ -411,7 +411,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Cream", "Black", "Brown"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, pants, catNew);
+                                pants, catNew);
 
                 seedProduct("Cargo Pants Women", "Pull&Bear", "cargo-pants-women", "/images/women/pants_3.jpg",
                                 46.0, 62.0, 42,
@@ -421,7 +421,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L", "XL"),
                                 Set.of("Olive", "Black", "Khaki"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, pants);
+                                pants);
 
                 seedProduct("Straight Office Pants", "H&M", "straight-office-pants", "/images/women/pants_4.jpg",
                                 44.0, 58.0, 50,
@@ -431,7 +431,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Navy", "Black", "Grey"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, pants);
+                                pants);
 
                 seedProduct("Pleated Pants", "Dorothy Perkins", "pleated-pants", "/images/women/pants_5.jpg",
                                 48.0, 64.0, 30,
@@ -441,7 +441,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Beige", "White", "Black"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, pants, catNew);
+                                pants, catNew);
 
                 // =========================
                 // JEANS
@@ -454,7 +454,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("26", "27", "28", "29", "30"),
                                 Set.of("Blue", "Light Blue"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, jeans);
+                                jeans);
 
                 seedProduct("Skinny Jeans Women", "Mango", "skinny-jeans-women", "/images/women/jeans_2.jpg",
                                 49.0, 65.0, 45,
@@ -464,7 +464,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("26", "27", "28", "29", "30"),
                                 Set.of("Dark Blue", "Black"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, jeans);
+                                jeans);
 
                 seedProduct("Straight Leg Jeans", "H&M", "straight-leg-jeans", "/images/women/jeans_3.jpg",
                                 52.0, 69.0, 50,
@@ -474,7 +474,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("26", "27", "28", "29", "30"),
                                 Set.of("Light Blue", "Blue"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, jeans, catNew);
+                                jeans, catNew);
 
                 seedProduct("Flared Jeans Women", "Pull&Bear", "flared-jeans-women", "/images/women/jeans_4.jpg",
                                 58.0, 78.0, 35,
@@ -484,7 +484,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("26", "27", "28", "29"),
                                 Set.of("Blue", "Black"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, jeans);
+                                jeans);
 
                 seedProduct("Black High Waist Jeans", "Uniqlo", "black-high-waist-jeans", "/images/women/jeans_5.jpg",
                                 54.0, 72.0, 42,
@@ -494,7 +494,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("26", "27", "28", "29", "30"),
                                 Set.of("Black"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, jeans, catNew);
+                                jeans, catNew);
 
                 // =========================
                 // SHORTS
@@ -507,7 +507,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Blue", "Light Blue"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, shorts);
+                                shorts);
 
                 seedProduct("Linen Shorts", "Mango", "linen-shorts", "/images/women/shorts_2.jpg",
                                 29.0, 39.0, 50,
@@ -517,7 +517,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Beige", "White", "Brown"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, shorts);
+                                shorts);
 
                 seedProduct("Tailored Shorts", "H&M", "tailored-shorts", "/images/women/shorts_3.jpg",
                                 35.0, 48.0, 40,
@@ -527,7 +527,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Black", "Grey", "Cream"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, shorts, catNew);
+                                shorts, catNew);
 
                 seedProduct("Sport Shorts Women", "Adidas", "sport-shorts-women", "/images/women/shorts_4.jpg",
                                 28.0, 38.0, 60,
@@ -537,7 +537,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Black", "Pink", "Grey"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, shorts);
+                                shorts);
 
                 seedProduct("Pleated Mini Shorts", "Pull&Bear", "pleated-mini-shorts", "/images/women/shorts_5.jpg",
                                 31.0, 42.0, 36,
@@ -547,7 +547,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M"),
                                 Set.of("Cream", "Black", "Pink"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, shorts, catNew);
+                                shorts, catNew);
 
                 // =========================
                 // SKIRTS
@@ -560,7 +560,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Black", "Grey", "Navy"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, skirts);
+                                skirts);
 
                 seedProduct("A Line Skirt", "Mango", "a-line-skirt", "/images/women/skirt_2.jpg",
                                 38.0, 52.0, 40,
@@ -570,7 +570,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Beige", "Black", "Brown"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, skirts, catNew);
+                                skirts, catNew);
 
                 seedProduct("Denim Mini Skirt", "H&M", "denim-mini-skirt", "/images/women/skirt_3.jpg",
                                 36.0, 49.0, 50,
@@ -580,7 +580,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Blue", "Light Blue"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, skirts);
+                                skirts);
 
                 seedProduct("Satin Midi Skirt", "Dorothy Perkins", "satin-midi-skirt", "/images/women/skirt_4.jpg",
                                 45.0, 62.0, 30,
@@ -590,7 +590,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Champagne", "Black", "Pink"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, skirts);
+                                skirts);
 
                 seedProduct("Floral Long Skirt", "Pull&Bear", "floral-long-skirt", "/images/women/skirt_5.jpg",
                                 41.0, 55.0, 34,
@@ -600,7 +600,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Pink", "White", "Blue"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, skirts, catNew);
+                                skirts, catNew);
 
                 // =========================
                 // DRESSES
@@ -614,7 +614,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Red", "Black", "Navy"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, dresses);
+                                dresses);
 
                 seedProduct("Floral Summer Dress", "Mango", "floral-summer-dress", "/images/women/dress_2.jpg",
                                 55.0, 72.0, 40,
@@ -624,7 +624,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Pink", "White", "Yellow"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, dresses, catNew);
+                                dresses, catNew);
 
                 seedProduct("Bodycon Mini Dress", "Zara", "bodycon-mini-dress", "/images/women/dress_3.jpg",
                                 49.0, 65.0, 35,
@@ -634,7 +634,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M"),
                                 Set.of("Black", "Red", "White"),
                                 Set.of(tagWomen, tagSale),
-                                catClothes, dresses);
+                                dresses);
 
                 seedProduct("Korean Shirt Dress", "H&M", "korean-shirt-dress", "/images/women/dress_4.jpg",
                                 46.0, 60.0, 42,
@@ -644,7 +644,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("S", "M", "L"),
                                 Set.of("Blue", "White", "Beige"),
                                 Set.of(tagWomen, tagClothes),
-                                catClothes, dresses);
+                                dresses);
 
                 seedProduct("Satin Slip Dress", "Pull&Bear", "satin-slip-dress", "/images/women/dress_5.jpg",
                                 59.0, 78.0, 30,
@@ -654,7 +654,7 @@ public class DataInitializer implements CommandLineRunner {
                                 Set.of("XS", "S", "M", "L"),
                                 Set.of("Champagne", "Black", "Pink"),
                                 Set.of(tagWomen, tagNew),
-                                catClothes, dresses, catNew);
+                                dresses, catNew);
 
                 // =========================
                 // SHOES
@@ -784,9 +784,7 @@ public class DataInitializer implements CommandLineRunner {
                 category.setImage(image);
                 category.setActive(true);
 
-                if (parent != null) {
-                        category.setParent(parent);
-                }
+                category.setParent(parent);
 
                 return categoryRepository.save(category);
         }
@@ -808,25 +806,25 @@ public class DataInitializer implements CommandLineRunner {
                         Category... categories) {
                 Product product = productRepository.findBySlug(slug).orElseGet(Product::new);
 
+                product.setProductName(productName);
+                product.setBrandName(brandName);
+                product.setSlug(slug);
+                product.setImageUrl(imageUrl);
+                product.setSalePrice(salePrice);
+                product.setComparePrice(comparePrice);
+                product.setQuantity(quantity);
+                product.setShortDescription(shortDescription);
+                product.setProductDescription(productDescription);
+                product.setProductType("simple");
+                product.setPublished(true);
+                product.setDisableOutOfStock(false);
                 if (product.getId() == null) {
-                        product.setProductName(productName);
-                        product.setBrandName(brandName);
-                        product.setSlug(slug);
-                        product.setImageUrl(imageUrl);
-                        product.setSalePrice(salePrice);
-                        product.setComparePrice(comparePrice);
-                        product.setQuantity(quantity);
-                        product.setShortDescription(shortDescription);
-                        product.setProductDescription(productDescription);
-                        product.setProductType("simple");
-                        product.setPublished(true);
-                        product.setDisableOutOfStock(false);
                         product.setRatingAverage(5.0);
                         product.setReviewCount(0);
-                        product.setNote(note);
-                        product.setSizes(new HashSet<>(sizes));
-                        product.setColors(new HashSet<>(colors));
                 }
+                product.setNote(note);
+                product.setSizes(new HashSet<>(sizes));
+                product.setColors(new HashSet<>(colors));
 
                 if (product.getTags() == null) {
                         product.setTags(new HashSet<>());
@@ -836,8 +834,29 @@ public class DataInitializer implements CommandLineRunner {
                 if (product.getCategories() == null) {
                         product.setCategories(new HashSet<>());
                 }
-                product.getCategories().addAll(Set.of(categories));
+                assignProductCategories(product, categories);
 
                 productRepository.save(product);
+        }
+
+        private void assignProductCategories(Product product, Category... categories) {
+                Set<Category> requestedCategories = new HashSet<>(Set.of(categories));
+                Set<Category> parentCategories = new HashSet<>();
+
+                for (Category category : requestedCategories) {
+                        if (category.getParent() != null) {
+                                parentCategories.add(category.getParent());
+                        }
+                }
+
+                requestedCategories.removeIf(category -> hasSameCategoryId(parentCategories, category));
+                product.getCategories().removeIf(category -> hasSameCategoryId(parentCategories, category));
+                product.getCategories().addAll(requestedCategories);
+        }
+
+        private boolean hasSameCategoryId(Set<Category> categories, Category candidate) {
+                return categories.stream().anyMatch(category -> category.getId() != null
+                                && candidate.getId() != null
+                                && category.getId().equals(candidate.getId()));
         }
 }
