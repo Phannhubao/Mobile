@@ -406,7 +406,7 @@ class _BagScreenState extends State<BagScreen> {
                         final String imageUrl =
                             AppConstants.resolveUrl(product.imageUrl);
                         return Container(
-                          height: 104 * scale,
+                          height: 112 * scale,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(8 * scale),
@@ -426,7 +426,7 @@ class _BagScreenState extends State<BagScreen> {
                                     left: Radius.circular(8 * scale)),
                                 child: SizedBox(
                                   width: 104 * scale,
-                                  height: 104 * scale,
+                                  height: 112 * scale,
                                   child: imageUrl.isNotEmpty
                                       ? Image.network(
                                           imageUrl,
@@ -492,11 +492,14 @@ class _BagScreenState extends State<BagScreen> {
                                                   minWidth: 32 * scale,
                                                   minHeight: 32 * scale,
                                                 ),
-                                                icon: Icon(
-                                                  Icons.more_vert,
-                                                  color:
-                                                      const Color(0xFF9B9B9B),
-                                                  size: 20 * scale,
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(4 * scale),
+                                                  child: Icon(
+                                                    Icons.more_vert,
+                                                    color:
+                                                        const Color(0xFF9B9B9B),
+                                                    size: 20 * scale,
+                                                  ),
                                                 ),
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
@@ -638,43 +641,21 @@ class _BagScreenState extends State<BagScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Row(
-                                            children: [
-                                              // Minus Button
-                                              _buildQtyButton(
-                                                icon: Icons.remove,
-                                                onTap: () => cartProvider
-                                                    .decrementQuantity(
-                                                  product.id,
-                                                  item.selectedSize,
-                                                  item.selectedColor,
-                                                ),
-                                                scale: scale,
-                                              ),
-                                              SizedBox(width: 8 * scale),
-                                              // Quantity value
-                                              Text(
-                                                '${item.quantity}',
-                                                style: GoogleFonts.inter(
-                                                  fontSize: 14 * scale,
-                                                  fontWeight: FontWeight.w600,
-                                                  color:
-                                                      const Color(0xFF222222),
-                                                ),
-                                              ),
-                                              SizedBox(width: 8 * scale),
-                                              // Plus Button
-                                              _buildQtyButton(
-                                                icon: Icons.add,
-                                                onTap: () => cartProvider
-                                                    .incrementQuantity(
-                                                  product.id,
-                                                  item.selectedSize,
-                                                  item.selectedColor,
-                                                ),
-                                                scale: scale,
-                                              ),
-                                            ],
+                                          _buildQtySelector(
+                                            quantity: item.quantity,
+                                            onDecrement: () => cartProvider
+                                                .decrementQuantity(
+                                              product.id,
+                                              item.selectedSize,
+                                              item.selectedColor,
+                                            ),
+                                            onIncrement: () => cartProvider
+                                                .incrementQuantity(
+                                              product.id,
+                                              item.selectedSize,
+                                              item.selectedColor,
+                                            ),
+                                            scale: scale,
                                           ),
                                           // Price
                                           Text(
@@ -863,32 +844,72 @@ class _BagScreenState extends State<BagScreen> {
     );
   }
 
-  Widget _buildQtyButton({
-    required IconData icon,
-    required VoidCallback onTap,
+  Widget _buildQtySelector({
+    required int quantity,
+    required VoidCallback onDecrement,
+    required VoidCallback onIncrement,
     required double scale,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 32 * scale,
-        height: 32 * scale,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 4 * scale,
-              offset: Offset(0, 2 * scale),
+    return Container(
+      height: 32 * scale,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16 * scale),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 6 * scale,
+            offset: Offset(0, 2 * scale),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: onDecrement,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              width: 32 * scale,
+              height: 32 * scale,
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.remove,
+                size: 16 * scale,
+                color: const Color(0xFF9B9B9B),
+              ),
             ),
-          ],
-        ),
-        child: Icon(
-          icon,
-          size: 16 * scale,
-          color: const Color(0xFF9B9B9B),
-        ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4 * scale),
+            child: SizedBox(
+              width: 20 * scale,
+              child: Text(
+                '$quantity',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 14 * scale,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF222222),
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: onIncrement,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              width: 32 * scale,
+              height: 32 * scale,
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.add,
+                size: 16 * scale,
+                color: const Color(0xFF9B9B9B),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

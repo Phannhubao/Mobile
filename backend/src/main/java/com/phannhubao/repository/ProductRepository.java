@@ -28,6 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     
     List<Product> findByTagsTagNameIgnoreCase(String tagName);
     java.util.Optional<Product> findByProductName(String productName);
+    java.util.Optional<Product> findBySlug(String slug);
 
     @Query("SELECT p FROM Product p JOIN p.categories c WHERE c.id = :categoryId")
     List<Product> findByCategoryId(java.util.UUID categoryId);

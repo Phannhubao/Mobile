@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +20,7 @@ import java.util.Set;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@org.springframework.core.annotation.Order(1)
+@Order(4)
 @ConditionalOnProperty(name = "app.seed.enabled", havingValue = "true", matchIfMissing = true)
 public class DataInitializer implements CommandLineRunner {
 
@@ -27,691 +29,815 @@ public class DataInitializer implements CommandLineRunner {
         private final CategoryRepository categoryRepository;
 
         @Override
-        public void run(String... args) throws Exception {
-                if (productRepository.count() > 0) {
-                        log.info("Product data already exists; skipping sample product seed.");
-                        return;
-                }
+        @Transactional
+        public void run(String... args) {
 
-                // Ensure tags exist
-                Tag tagNew = tagRepository.findByTagNameIgnoreCase("NEW")
-                                .orElseGet(() -> tagRepository.save(Tag.builder().tagName("NEW").build()));
+                /*
+                 * Nếu muốn seed lại sạch từ đầu thì mở dòng này.
+                 * Nếu không muốn xóa sản phẩm cũ thì để comment.
+                 */
+                // productRepository.deleteAll();
 
-                Tag tagSale = tagRepository.findByTagNameIgnoreCase("SALE")
-                                .orElseGet(() -> tagRepository.save(Tag.builder().tagName("SALE").build()));
+                Tag tagNew = getOrCreateTag("NEW");
+                Tag tagSale = getOrCreateTag("SALE");
+                Tag tagWomen = getOrCreateTag("WOMEN");
+                Tag tagClothes = getOrCreateTag("CLOTHES");
+                Tag tagShoes = getOrCreateTag("SHOES");
+                Tag tagAccessories = getOrCreateTag("ACCESSORIES");
 
-                Tag tagTops = tagRepository.findByTagNameIgnoreCase("TOPS")
-                                .orElseGet(() -> tagRepository.save(Tag.builder().tagName("TOPS").build()));
+                Category catNew = getOrCreateCategory("New", "New arrivals", "/images/cat_new.jpg", null);
+                Category catClothes = getOrCreateCategory("Clothes", "Clothes collection", "/images/cat_clothes.jpg",
+                                null);
+                Category catShoes = getOrCreateCategory("Shoes", "Shoes collection", "/images/cat_shoes.jpg", null);
+                Category catAccessories = getOrCreateCategory("Accessories", "Accessories collection",
+                                "/images/cat_accessories.jpg", null);
 
-                // Ensure categories exist
-                Category catNew = categoryRepository.findByCategoryNameIgnoreCase("New")
-                                .orElseGet(() -> categoryRepository.save(Category.builder()
-                                                .categoryName("New")
-                                                .categoryDescription("New arrivals")
-                                                .image("/images/cat_new.jpg")
-                                                .active(true)
-                                                .createdAt(java.time.OffsetDateTime.now())
-                                                .updatedAt(java.time.OffsetDateTime.now())
-                                                .build()));
+                Category tops = getOrCreateCategory("Tops", "Tops and upper-body clothing", "/images/cat_tops.jpg",
+                                catClothes);
+                Category shirts = getOrCreateCategory("Shirts & Blouses", "Shirts and blouses",
+                                "/images/cat_shirts.jpg", catClothes);
+                Category cardigans = getOrCreateCategory("Cardigans & Sweaters", "Cardigans and sweaters",
+                                "/images/cat_cardigans.jpg", catClothes);
+                Category knitwear = getOrCreateCategory("Knitwear", "Knitted clothing", "/images/cat_knitwear.jpg",
+                                catClothes);
+                Category blazers = getOrCreateCategory("Blazers", "Blazers and tailored jackets",
+                                "/images/cat_blazers.jpg", catClothes);
+                Category outerwear = getOrCreateCategory("Outerwear", "Jackets, coats and parkas",
+                                "/images/cat_outerwear.jpg", catClothes);
+                Category pants = getOrCreateCategory("Pants", "Pants and trousers", "/images/cat_pants.jpg",
+                                catClothes);
+                Category jeans = getOrCreateCategory("Jeans", "Denim jeans", "/images/cat_jeans.jpg", catClothes);
+                Category shorts = getOrCreateCategory("Shorts", "Shorts", "/images/cat_shorts.jpg", catClothes);
+                Category skirts = getOrCreateCategory("Skirts", "Skirts", "/images/cat_skirts.jpg", catClothes);
+                Category dresses = getOrCreateCategory("Dresses", "Dresses", "/images/cat_dresses.jpg", catClothes);
 
-                Category catClothes = categoryRepository.findByCategoryNameIgnoreCase("Clothes")
-                                .orElseGet(() -> categoryRepository.save(Category.builder()
-                                                .categoryName("Clothes")
-                                                .categoryDescription("Clothes collection")
-                                                .image("/images/cat_clothes.jpg")
-                                                .active(true)
-                                                .createdAt(java.time.OffsetDateTime.now())
-                                                .updatedAt(java.time.OffsetDateTime.now())
-                                                .build()));
+                // =========================
+                // TOPS
+                // =========================
+                seedProduct("Basic Cotton Top", "Mango", "basic-cotton-top", "/images/women/tops_1.jpg",
+                                19.0, 25.0, 60,
+                                "Áo top nữ cotton basic dễ phối đồ",
+                                "Áo top nữ chất liệu cotton mềm mại, phù hợp đi học, đi chơi hoặc mặc hằng ngày.",
+                                "White",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("White", "Black", "Beige"),
+                                Set.of(tagWomen, tagClothes, tagNew),
+                                catClothes, tops, catNew);
 
-                Category catShoes = categoryRepository.findByCategoryNameIgnoreCase("Shoes")
-                                .orElseGet(() -> categoryRepository.save(Category.builder()
-                                                .categoryName("Shoes")
-                                                .categoryDescription("Shoes collection")
-                                                .image("/images/cat_shoes.jpg")
-                                                .active(true)
-                                                .createdAt(java.time.OffsetDateTime.now())
-                                                .updatedAt(java.time.OffsetDateTime.now())
-                                                .build()));
+                seedProduct("Ribbed Tank Top", "H&M", "ribbed-tank-top", "/images/women/tops_2.jpg",
+                                15.0, 20.0, 70,
+                                "Áo ba lỗ nữ gân ôm dáng",
+                                "Áo tank top nữ chất thun gân co giãn, thiết kế trẻ trung và năng động.",
+                                "Beige",
+                                Set.of("XS", "S", "M"),
+                                Set.of("Beige", "Brown", "Black"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, tops);
 
-                Category catAccessories = categoryRepository.findByCategoryNameIgnoreCase("Accessories")
-                                .orElseGet(() -> categoryRepository.save(Category.builder()
-                                                .categoryName("Accessories")
-                                                .categoryDescription("Accessories collection")
-                                                .image("/images/cat_accessories.jpg")
-                                                .active(true)
-                                                .createdAt(java.time.OffsetDateTime.now())
-                                                .updatedAt(java.time.OffsetDateTime.now())
-                                                .build()));
+                seedProduct("Summer Crop Top", "Zara", "summer-crop-top", "/images/women/tops_3.jpg",
+                                22.0, 30.0, 45,
+                                "Áo crop top nữ mùa hè",
+                                "Áo crop top nữ dáng ngắn, chất liệu thoáng mát, phù hợp phối cùng quần jeans hoặc chân váy.",
+                                "Pink",
+                                Set.of("XS", "S", "M"),
+                                Set.of("Pink", "White", "Black"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, tops);
 
-                // Initialize basic products
-                log.info("Initializing basic product and tag data with sizes and colors...");
-                Product p1 = Product.builder()
-                                .productName("Evening Dress")
-                                .brandName("Dorothy Perkins")
-                                .slug("evening-dress")
-                                .imageUrl("/images/product1.jpg")
-                                .salePrice(12.0)
-                                .comparePrice(15.0)
-                                .quantity(50)
-                                .shortDescription("Đầm dạ hội thanh lịch dáng hồng")
-                                .productDescription(
-                                                "Đầm dạ hội phong cách thanh lịch, chất liệu mát mẻ phù hợp cho mùa hè.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(10)
-                                .note("Red")
-                                .sizes(new HashSet<>(Set.of("S", "M", "L")))
-                                .colors(new HashSet<>(Set.of("Red", "Black")))
-                                .tags(new HashSet<>(Set.of(tagSale)))
-                                .build();
+                seedProduct("Off Shoulder Top", "Shein", "off-shoulder-top", "/images/women/tops_4.jpg",
+                                18.0, 24.0, 50,
+                                "Áo trễ vai nữ thanh lịch",
+                                "Áo trễ vai nữ phong cách nhẹ nhàng, phù hợp đi chơi, hẹn hò hoặc chụp ảnh.",
+                                "Cream",
+                                Set.of("S", "M", "L"),
+                                Set.of("Cream", "White", "Blue"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, tops);
 
-                Product p2 = Product.builder()
-                                .productName("Sport Dress")
-                                .brandName("Sitlly")
-                                .slug("sport-dress")
-                                .imageUrl("/images/product2.jpg")
-                                .salePrice(19.0)
-                                .comparePrice(22.0)
-                                .quantity(30)
-                                .shortDescription("Đầm thể thao năng động co giãn")
-                                .productDescription(
-                                                "Đầm thể thao dáng suông dài năng động, chất liệu cotton co giãn cao cấp.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(10)
-                                .note("Navy")
-                                .sizes(new HashSet<>(Set.of("S", "M", "L", "XL")))
-                                .colors(new HashSet<>(Set.of("Navy", "Grey")))
-                                .tags(new HashSet<>(Set.of(tagSale)))
-                                .build();
+                seedProduct("Lace Trim Cami Top", "Pull&Bear", "lace-trim-cami-top", "/images/women/tops_5.jpg",
+                                20.0, 28.0, 40,
+                                "Áo hai dây nữ viền ren",
+                                "Áo cami top nữ viền ren nhẹ nhàng, thiết kế nữ tính, dễ phối với áo khoác mỏng.",
+                                "Black",
+                                Set.of("XS", "S", "M"),
+                                Set.of("Black", "White", "Red"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, tops, catNew);
 
-                Product p3 = Product.builder()
-                                .productName("Oversize T-Shirt")
-                                .brandName("GUCCI")
-                                .slug("oversize-tshirt-gucci")
-                                .imageUrl("/images/product3.jpg")
-                                .salePrice(650.0)
-                                .comparePrice(0.0)
-                                .quantity(15)
-                                .shortDescription("Áo thun form rộng Gucci họa tiết cao cấp")
-                                .productDescription(
-                                                "Áo thun form rộng cao cấp từ thương hiệu Gucci thời trang phong cách.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.5)
-                                .reviewCount(8)
-                                .note("Black")
-                                .sizes(new HashSet<>(Set.of("M", "L", "XL")))
-                                .colors(new HashSet<>(Set.of("Black", "White")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                // =========================
+                // SHIRTS & BLOUSES
+                // =========================
+                seedProduct("White Office Blouse", "Mango", "white-office-blouse", "/images/women/shirt_1.jpg",
+                                29.0, 39.0, 55,
+                                "Áo blouse trắng nữ công sở",
+                                "Áo blouse trắng nữ thiết kế thanh lịch, phù hợp đi làm, thuyết trình hoặc gặp khách hàng.",
+                                "White",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("White", "Beige"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, shirts);
 
-                p1 = productRepository.save(p1);
-                p2 = productRepository.save(p2);
-                p3 = productRepository.save(p3);
+                seedProduct("Silk Satin Shirt", "Zara", "silk-satin-shirt", "/images/women/shirt_2.jpg",
+                                45.0, 59.0, 35,
+                                "Áo sơ mi satin nữ cao cấp",
+                                "Áo sơ mi nữ chất satin bóng nhẹ, tạo cảm giác sang trọng và mềm mại khi mặc.",
+                                "Champagne",
+                                Set.of("S", "M", "L"),
+                                Set.of("Champagne", "Black", "Navy"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, shirts, catNew);
 
-                linkProductToCategory(p1, catClothes);
-                linkProductToCategory(p2, catClothes);
-                linkProductToCategory(p3, catNew);
+                seedProduct("Floral Chiffon Blouse", "Dorothy Perkins", "floral-chiffon-blouse",
+                                "/images/women/shirt_3.jpg",
+                                32.0, 45.0, 42,
+                                "Áo blouse voan hoa nữ",
+                                "Áo blouse voan họa tiết hoa nhẹ nhàng, phù hợp phong cách nữ tính và dịu dàng.",
+                                "Floral",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Pink", "White", "Blue"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, shirts);
 
-                // Initialize TOPS products
-                log.info("Initializing TOPS product data with sizes and colors...");
-                Product p4 = Product.builder()
-                                .productName("T-Shirt SPANISH")
-                                .brandName("Mango")
-                                .slug("t-shirt-spanish-mango")
-                                .imageUrl("/images/top1.jpg")
-                                .salePrice(9.0)
-                                .comparePrice(0.0)
-                                .quantity(20)
-                                .shortDescription("Áo thun T-Shirt SPANISH Mango")
-                                .productDescription("Áo thun T-Shirt SPANISH Mango chất liệu cotton mềm mại thoải mái.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.0)
-                                .reviewCount(3)
-                                .note("Beige")
-                                .sizes(new HashSet<>(Set.of("S", "M", "L")))
-                                .colors(new HashSet<>(Set.of("Black", "Beige", "Red")))
-                                .tags(new HashSet<>(Set.of(tagTops, tagNew)))
-                                .build();
+                seedProduct("Striped Casual Shirt", "H&M", "striped-casual-shirt", "/images/women/shirt_4.jpg",
+                                27.0, 35.0, 50,
+                                "Áo sơ mi sọc nữ casual",
+                                "Áo sơ mi sọc form rộng, có thể mặc riêng hoặc khoác ngoài áo thun.",
+                                "Blue",
+                                Set.of("S", "M", "L", "XL"),
+                                Set.of("Blue", "White"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, shirts);
 
-                Product p5 = Product.builder()
-                                .productName("Blouse")
-                                .brandName("Dorothy Perkins")
-                                .slug("blouse-dorothy-perkins")
-                                .imageUrl("/images/top2.jpg")
-                                .salePrice(14.0)
-                                .comparePrice(21.0)
-                                .quantity(15)
-                                .shortDescription("Áo blouse Dororthy nữ tính thanh lịch")
-                                .productDescription("Áo blouse Dorothy Perkins chất liệu voan nhẹ mềm mại nữ tính.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(10)
-                                .note("White")
-                                .sizes(new HashSet<>(Set.of("XS", "S", "M")))
-                                .colors(new HashSet<>(Set.of("White", "Beige", "Navy")))
-                                .tags(new HashSet<>(Set.of(tagTops, tagSale)))
-                                .build();
+                seedProduct("Bow Tie Blouse", "Mango", "bow-tie-blouse", "/images/women/shirt_5.jpg",
+                                34.0, 46.0, 30,
+                                "Áo blouse nữ cổ nơ",
+                                "Áo blouse cổ nơ thanh lịch, phù hợp phong cách công sở nhẹ nhàng.",
+                                "Ivory",
+                                Set.of("XS", "S", "M"),
+                                Set.of("Ivory", "Black", "Pink"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, shirts, catNew);
 
-                Product p6 = Product.builder()
-                                .productName("Shirt")
-                                .brandName("Mango")
-                                .slug("shirt-mango")
-                                .imageUrl("/images/top3.jpg")
-                                .salePrice(9.0)
-                                .comparePrice(0.0)
-                                .quantity(50)
-                                .shortDescription("Áo sơ mi Mango cơ bản")
-                                .productDescription("Áo sơ mi nữ Mango kiểu dáng basic dễ phối đồ.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(0.0)
-                                .reviewCount(0)
-                                .note("White")
-                                .sizes(new HashSet<>(Set.of("S", "M", "L", "XL")))
-                                .colors(new HashSet<>(Set.of("White", "Grey", "Black")))
-                                .tags(new HashSet<>(Set.of(tagTops, tagNew)))
-                                .build();
+                // =========================
+                // CARDIGANS & SWEATERS
+                // =========================
+                seedProduct("Soft Knit Cardigan", "s.Oliver", "soft-knit-cardigan", "/images/women/cardigan_1.jpg",
+                                39.0, 55.0, 40,
+                                "Áo cardigan len mềm nữ",
+                                "Áo cardigan nữ chất len mềm, thiết kế cài khuy nhẹ nhàng, phù hợp thời tiết se lạnh.",
+                                "Beige",
+                                Set.of("S", "M", "L"),
+                                Set.of("Beige", "Brown", "White"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, cardigans);
 
-                Product p9 = Product.builder()
-                                .productName("Leather Shoes")
-                                .brandName("GUCCI")
-                                .slug("leather-shoes-gucci")
-                                .imageUrl("/images/cat_shoes.jpg")
-                                .salePrice(320.0)
-                                .comparePrice(0.0)
-                                .quantity(10)
-                                .shortDescription("Giày da nam GUCCI cao cấp")
-                                .productDescription(
-                                                "Giày da nam GUCCI chất liệu da thật 100%, thiết kế lịch lãm, sang trọng.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(5)
-                                .note("Black")
-                                .sizes(new HashSet<>(Set.of("39", "40", "41", "42")))
-                                .colors(new HashSet<>(Set.of("Black", "Brown")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Cropped Cardigan", "Zara", "cropped-cardigan", "/images/women/cardigan_2.jpg",
+                                36.0, 49.0, 38,
+                                "Áo cardigan dáng ngắn nữ",
+                                "Áo cardigan crop nữ form ngắn trẻ trung, dễ phối cùng đầm hoặc quần cạp cao.",
+                                "Pink",
+                                Set.of("XS", "S", "M"),
+                                Set.of("Pink", "White", "Black"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, cardigans, catNew);
 
-                Product p11 = Product.builder()
-                                .productName("Classic Watch")
-                                .brandName("s.Oliver")
-                                .slug("classic-watch-soliver")
-                                .imageUrl("/images/cat_accessories.jpg")
-                                .salePrice(150.0)
-                                .comparePrice(0.0)
-                                .quantity(8)
-                                .shortDescription("Đồng hồ nam s.Oliver cổ điển")
-                                .productDescription(
-                                                "Đồng hồ đeo tay s.Oliver thiết kế mặt kính sapphire chống xước, dây da cao cấp.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.7)
-                                .reviewCount(14)
-                                .note("Black")
-                                .sizes(new HashSet<>(Set.of("One Size")))
-                                .colors(new HashSet<>(Set.of("Gold", "Silver", "Black")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("V Neck Sweater", "H&M", "v-neck-sweater", "/images/women/cardigan_3.jpg",
+                                42.0, 58.0, 45,
+                                "Áo sweater cổ V nữ",
+                                "Áo sweater nữ cổ V, chất liệu dệt kim ấm nhẹ, phù hợp mặc đi học hoặc đi làm.",
+                                "Grey",
+                                Set.of("S", "M", "L", "XL"),
+                                Set.of("Grey", "Navy", "Cream"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, cardigans);
 
-                // Seed products from /pic directory
-                Product p14 = Product.builder()
-                                .productName("Trendy Jacket")
-                                .brandName("Mango")
-                                .slug("trendy-jacket-mango")
-                                .imageUrl("/images/image.png")
-                                .salePrice(75.0)
-                                .comparePrice(0.0)
-                                .quantity(12)
-                                .shortDescription("Áo khoác gió thời trang Mango")
-                                .productDescription("Áo khoác gió Mango thiết kế cá tính, chống gió chống nước nhẹ.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.5)
-                                .reviewCount(6)
-                                .note("Black")
-                                .sizes(new HashSet<>(Set.of("S", "M", "L")))
-                                .colors(new HashSet<>(Set.of("Black", "Beige")))
-                                .tags(new HashSet<>(Set.of(tagTops, tagNew)))
-                                .build();
+                seedProduct("Button Knit Cardigan", "Mango", "button-knit-cardigan", "/images/women/cardigan_4.jpg",
+                                44.0, 60.0, 32,
+                                "Áo cardigan nữ cài nút",
+                                "Áo cardigan nữ cài nút phong cách Hàn Quốc, mềm mại và nữ tính.",
+                                "Cream",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Cream", "Blue", "Brown"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, cardigans);
 
-                Product p15 = Product.builder()
-                                .productName("Casual Hoodie")
-                                .brandName("adidas Originals")
-                                .slug("casual-hoodie-adidas")
-                                .imageUrl("/images/image (1).png")
-                                .salePrice(65.0)
-                                .comparePrice(0.0)
-                                .quantity(20)
-                                .shortDescription("Áo nỉ Hoodie adidas Originals")
-                                .productDescription(
-                                                "Áo nỉ có mũ adidas Originals mềm mại phong cách năng động thể thao.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.7)
-                                .reviewCount(18)
-                                .note("Gray")
-                                .sizes(new HashSet<>(Set.of("M", "L", "XL")))
-                                .colors(new HashSet<>(Set.of("Gray", "Black", "Red")))
-                                .tags(new HashSet<>(Set.of(tagTops, tagNew)))
-                                .build();
+                seedProduct("Oversize Sweater", "Pull&Bear", "oversize-sweater", "/images/women/cardigan_5.jpg",
+                                49.0, 69.0, 36,
+                                "Áo sweater nữ form rộng",
+                                "Áo sweater form rộng dành cho nữ, phù hợp phong cách casual và street style.",
+                                "Navy",
+                                Set.of("S", "M", "L", "XL"),
+                                Set.of("Navy", "Grey", "Black"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, cardigans, catNew);
 
-                Product p16 = Product.builder()
-                                .productName("Active Wear")
-                                .brandName("adidas")
-                                .slug("active-wear-adidas")
-                                .imageUrl("/images/image (2).png")
-                                .salePrice(40.0)
-                                .comparePrice(60.0)
-                                .quantity(30)
-                                .shortDescription("Bộ đồ thể thao adidas năng động")
-                                .productDescription("Bộ quần áo thể thao adidas thoáng mát phù hợp luyện tập.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.3)
-                                .reviewCount(8)
-                                .note("Black")
-                                .sizes(new HashSet<>(Set.of("S", "M", "L")))
-                                .colors(new HashSet<>(Set.of("Black", "White")))
-                                .tags(new HashSet<>(Set.of(tagTops, tagSale)))
-                                .build();
+                // =========================
+                // KNITWEAR
+                // =========================
+                seedProduct("Ribbed Knit Top", "Zara", "ribbed-knit-top", "/images/women/knit_1.jpg",
+                                31.0, 42.0, 44,
+                                "Áo dệt kim ôm dáng nữ",
+                                "Áo knit top nữ chất dệt kim co giãn, ôm dáng nhẹ, phù hợp mặc thu đông.",
+                                "Black",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Black", "White", "Brown"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, knitwear);
 
-                Product p17 = Product.builder()
-                                .productName("Denim Jacket")
-                                .brandName("Jack & Jones")
-                                .slug("denim-jacket-jack-jones")
-                                .imageUrl("/images/image (3).png")
-                                .salePrice(89.0)
-                                .comparePrice(0.0)
-                                .quantity(15)
-                                .shortDescription("Áo khoác bò Denim Jack & Jones")
-                                .productDescription(
-                                                "Áo khoác Denim bò nam từ thương hiệu Jack & Jones phong cách bụi bặm.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.8)
-                                .reviewCount(10)
-                                .note("Blue")
-                                .sizes(new HashSet<>(Set.of("M", "L", "XL")))
-                                .colors(new HashSet<>(Set.of("Blue", "Grey")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Cable Knit Sweater", "Mango", "cable-knit-sweater", "/images/women/knit_2.jpg",
+                                55.0, 75.0, 28,
+                                "Áo len vặn thừng nữ",
+                                "Áo len nữ họa tiết vặn thừng cổ điển, giữ ấm tốt và dễ phối đồ.",
+                                "Cream",
+                                Set.of("S", "M", "L"),
+                                Set.of("Cream", "Beige", "Grey"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, knitwear, catNew);
 
-                Product p18 = Product.builder()
-                                .productName("Warm Parka")
-                                .brandName("Blend")
-                                .slug("warm-parka-blend")
-                                .imageUrl("/images/image (4).png")
-                                .salePrice(110.0)
-                                .comparePrice(160.0)
-                                .quantity(15)
-                                .shortDescription("Áo khoác ấm phao Parka Blend")
-                                .productDescription("Áo khoác giữ ấm chống tuyết Parka Blend phong cách Bắc Âu ấm áp.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.6)
-                                .reviewCount(22)
-                                .note("Navy")
-                                .sizes(new HashSet<>(Set.of("S", "M", "L", "XL")))
-                                .colors(new HashSet<>(Set.of("Navy", "Black")))
-                                .tags(new HashSet<>(Set.of(tagSale)))
-                                .build();
+                seedProduct("Knit Polo Top", "H&M", "knit-polo-top", "/images/women/knit_3.jpg",
+                                37.0, 49.0, 35,
+                                "Áo polo dệt kim nữ",
+                                "Áo polo dệt kim nữ thanh lịch, phù hợp phong cách basic nhưng vẫn hiện đại.",
+                                "Green",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Green", "White", "Navy"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, knitwear);
 
-                Product p19 = Product.builder()
-                                .productName("Elegant Suit")
-                                .brandName("Boutique Moschino")
-                                .slug("elegant-suit-moschino")
-                                .imageUrl("/images/image (5).png")
-                                .salePrice(450.0)
-                                .comparePrice(0.0)
-                                .quantity(5)
-                                .shortDescription("Bộ Suit Moschino sang trọng quý phái")
-                                .productDescription(
-                                                "Bộ Comple Suit thiết kế cao cấp từ thương hiệu Boutique Moschino thanh lịch.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(2)
-                                .note("Black")
-                                .sizes(new HashSet<>(Set.of("XS", "S", "M", "L")))
-                                .colors(new HashSet<>(Set.of("Black", "White", "Beige")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Sleeveless Knit Vest", "Pull&Bear", "sleeveless-knit-vest", "/images/women/knit_4.jpg",
+                                33.0, 45.0, 40,
+                                "Áo gile len nữ không tay",
+                                "Áo gile len nữ không tay, dễ phối với sơ mi hoặc áo thun dài tay.",
+                                "Beige",
+                                Set.of("S", "M", "L"),
+                                Set.of("Beige", "Brown", "Black"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, knitwear);
 
-                Product p20 = Product.builder()
-                                .productName("Winter Coat")
-                                .brandName("Champion")
-                                .slug("winter-coat-champion")
-                                .imageUrl("/images/image (6).png")
-                                .salePrice(125.0)
-                                .comparePrice(0.0)
-                                .quantity(18)
-                                .shortDescription("Áo khoác phao dày ấm Champion")
-                                .productDescription("Áo phao dày mùa đông Champion giữ ấm tối ưu phom dáng thể thao.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.4)
-                                .reviewCount(14)
-                                .note("Black")
-                                .sizes(new HashSet<>(Set.of("S", "M", "L")))
-                                .colors(new HashSet<>(Set.of("Black", "Grey")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Turtleneck Knit Sweater", "Uniqlo", "turtleneck-knit-sweater", "/images/women/knit_5.jpg",
+                                50.0, 65.0, 34,
+                                "Áo len cổ lọ nữ",
+                                "Áo len cổ lọ nữ giữ ấm tốt, thiết kế tối giản phù hợp nhiều hoàn cảnh.",
+                                "Grey",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Grey", "Black", "Ivory"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, knitwear, catNew);
 
-                Product p21 = Product.builder()
-                                .productName("Fashion Cardigan")
-                                .brandName("s.Oliver")
-                                .slug("fashion-cardigan-soliver")
-                                .imageUrl("/images/image (7).png")
-                                .salePrice(45.0)
-                                .comparePrice(65.0)
-                                .quantity(25)
-                                .shortDescription("Áo len mỏng Cardigan s.Oliver")
-                                .productDescription("Áo len cài khuy mỏng nhẹ Cardigan s.Oliver trẻ trung năng động.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.6)
-                                .reviewCount(9)
-                                .note("Beige")
-                                .sizes(new HashSet<>(Set.of("S", "M", "L")))
-                                .colors(new HashSet<>(Set.of("Beige", "White")))
-                                .tags(new HashSet<>(Set.of(tagSale)))
-                                .build();
+                // =========================
+                // BLAZERS
+                // =========================
+                seedProduct("Classic Black Blazer", "Mango", "classic-black-blazer", "/images/women/blazer_1.jpg",
+                                79.0, 99.0, 25,
+                                "Áo blazer đen nữ basic",
+                                "Blazer nữ màu đen dáng basic, phù hợp công sở, phỏng vấn hoặc sự kiện.",
+                                "Black",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Black", "Grey"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, blazers);
 
-                Product p22 = Product.builder()
-                                .productName("Slim Fit Jeans")
-                                .brandName("Diesel")
-                                .slug("slim-fit-jeans-diesel")
-                                .imageUrl("/images/image (8).png")
-                                .salePrice(110.0)
-                                .comparePrice(0.0)
-                                .quantity(35)
-                                .shortDescription("Quần Jeans bò Diesel dáng ôm")
-                                .productDescription("Quần bò nam Jeans dáng ôm Slim Fit co giãn thoải mái hiệu Diesel.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.7)
-                                .reviewCount(17)
-                                .note("Blue")
-                                .sizes(new HashSet<>(Set.of("30", "31", "32", "33")))
-                                .colors(new HashSet<>(Set.of("Blue", "Black")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Beige Tailored Blazer", "Zara", "beige-tailored-blazer", "/images/women/blazer_2.jpg",
+                                89.0, 120.0, 20,
+                                "Áo blazer beige nữ may đo",
+                                "Blazer nữ màu beige dáng tailored, tạo phong cách thanh lịch và sang trọng.",
+                                "Beige",
+                                Set.of("S", "M", "L"),
+                                Set.of("Beige", "White", "Brown"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, blazers, catNew);
 
-                Product p23 = Product.builder()
-                                .productName("Leather Handbag")
-                                .brandName("Red Valentino")
-                                .slug("leather-handbag-valentino")
-                                .imageUrl("/images/image (9).png")
-                                .salePrice(290.0)
-                                .comparePrice(0.0)
-                                .quantity(8)
-                                .shortDescription("Túi xách da cao cấp Red Valentino")
-                                .productDescription(
-                                                "Túi xách nữ chất liệu da cao cấp chính hãng Red Valentino sang xịn mịn.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(3)
-                                .note("Red")
-                                .sizes(new HashSet<>(Set.of("One Size")))
-                                .colors(new HashSet<>(Set.of("Red", "Black", "Beige")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Oversize Office Blazer", "H&M", "oversize-office-blazer", "/images/women/blazer_3.jpg",
+                                69.0, 89.0, 30,
+                                "Áo blazer nữ form rộng",
+                                "Blazer nữ form rộng trẻ trung, dễ phối cùng áo croptop, quần jeans hoặc chân váy.",
+                                "Grey",
+                                Set.of("S", "M", "L", "XL"),
+                                Set.of("Grey", "Black", "Navy"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, blazers);
 
-                Product p24 = Product.builder()
-                                .productName("Wonyoung Summer Dress")
-                                .brandName("Mango")
-                                .slug("wonyoung-summer-dress")
-                                .imageUrl("/images/jang wonyoung.jpg")
-                                .salePrice(95.0)
-                                .comparePrice(0.0)
-                                .quantity(12)
-                                .shortDescription("Đầm hè phong cách Jang WonYoung")
-                                .productDescription("Đầm hè phong cách trẻ trung phối ren hoa ngọt ngào hiệu Mango.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(4.9)
-                                .reviewCount(19)
-                                .note("White")
-                                .sizes(new HashSet<>(Set.of("XS", "S", "M")))
-                                .colors(new HashSet<>(Set.of("White", "Red", "Beige")))
-                                .tags(new HashSet<>(Set.of(tagTops, tagNew)))
-                                .build();
+                seedProduct("Cropped Blazer", "Pull&Bear", "cropped-blazer", "/images/women/blazer_4.jpg",
+                                72.0, 95.0, 22,
+                                "Áo blazer nữ dáng ngắn",
+                                "Blazer dáng ngắn phong cách hiện đại, phù hợp phối cùng quần cạp cao.",
+                                "White",
+                                Set.of("XS", "S", "M"),
+                                Set.of("White", "Black", "Pink"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, blazers);
 
-                Product p25 = Product.builder()
-                                .productName("Sport T-Shirt")
-                                .brandName("adidas")
-                                .slug("sport-tshirt-adidas")
-                                .imageUrl("/images/z7888710050382_c815de657ca1f5b7ddcbf867874e8f03.jpg")
-                                .salePrice(29.0)
-                                .comparePrice(0.0)
-                                .quantity(50)
-                                .shortDescription("Áo thun thể thao adidas thoáng mát")
-                                .productDescription("Áo thun thể thao adidas chất liệu thoáng khí, co giãn cực tốt.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(0)
-                                .sizes(new HashSet<>(Set.of("S", "M", "L")))
-                                .colors(new HashSet<>(Set.of("Black", "Red")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Plaid Blazer", "Dorothy Perkins", "plaid-blazer", "/images/women/blazer_5.jpg",
+                                83.0, 110.0, 18,
+                                "Áo blazer nữ caro",
+                                "Blazer họa tiết caro nữ tính, phù hợp phong cách vintage và công sở.",
+                                "Plaid",
+                                Set.of("S", "M", "L"),
+                                Set.of("Brown", "Grey", "Beige"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, blazers, catNew);
 
-                Product p26 = Product.builder()
-                                .productName("Stylish Blouse")
-                                .brandName("Mango")
-                                .slug("stylish-blouse-mango")
-                                .imageUrl("/images/z7888710132105_a4427b5a67d19b57addc1da878907bb5.jpg")
-                                .salePrice(39.0)
-                                .comparePrice(0.0)
-                                .quantity(50)
-                                .shortDescription("Áo blouse nữ Mango thời trang thanh lịch")
-                                .productDescription(
-                                                "Áo blouse Mango dáng ôm thanh lịch thích hợp cho môi trường công sở.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(0)
-                                .sizes(new HashSet<>(Set.of("XS", "S", "M")))
-                                .colors(new HashSet<>(Set.of("White", "Beige")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                // =========================
+                // OUTERWEAR
+                // =========================
+                seedProduct("Long Trench Coat", "Mango", "long-trench-coat", "/images/women/outerwear_1.jpg",
+                                120.0, 155.0, 18,
+                                "Áo trench coat dài nữ",
+                                "Áo trench coat nữ dáng dài, phong cách thanh lịch, phù hợp thời tiết thu đông.",
+                                "Khaki",
+                                Set.of("S", "M", "L"),
+                                Set.of("Khaki", "Beige", "Black"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, outerwear);
 
-                Product p29 = Product.builder()
-                                .productName("Knit Pullover")
-                                .brandName("Dorothy Perkins")
-                                .slug("knit-pullover-dorothy")
-                                .imageUrl("/images/z7889472051071_732f5bad4ebafe1b181a790c05127cd2.jpg")
-                                .salePrice(49.0)
-                                .comparePrice(0.0)
-                                .quantity(50)
-                                .shortDescription("Áo len cổ tròn Dorothy Perkins nhẹ nhàng")
-                                .productDescription("Áo len cổ tròn dệt kim Dorothy Perkins mỏng nhẹ, giữ ấm vừa phải.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(0)
-                                .sizes(new HashSet<>(Set.of("S", "M", "L")))
-                                .colors(new HashSet<>(Set.of("Gray", "Blue")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Puffer Jacket", "Zara", "puffer-jacket-women", "/images/women/outerwear_2.jpg",
+                                95.0, 130.0, 25,
+                                "Áo khoác phao nữ giữ ấm",
+                                "Áo khoác phao nữ nhẹ nhưng giữ ấm tốt, phù hợp du lịch hoặc mùa lạnh.",
+                                "White",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("White", "Black", "Pink"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, outerwear);
 
-                Product p30 = Product.builder()
-                                .productName("Summer Crop Top")
-                                .brandName("Mango")
-                                .slug("summer-crop-top-mango")
-                                .imageUrl("/images/z7889472114938_990a1e9bb7b8741d00593e620a50ab96.jpg")
-                                .salePrice(19.0)
-                                .comparePrice(0.0)
-                                .quantity(50)
-                                .shortDescription("Áo thun crop top Mango mát mẻ")
-                                .productDescription(
-                                                "Áo thun crop top Mango năng động trẻ trung chất liệu cotton mát mẻ.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(0)
-                                .sizes(new HashSet<>(Set.of("XS", "S", "M")))
-                                .colors(new HashSet<>(Set.of("White", "Black")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Denim Jacket Women", "H&M", "denim-jacket-women", "/images/women/outerwear_3.jpg",
+                                65.0, 85.0, 40,
+                                "Áo khoác denim nữ",
+                                "Áo khoác denim nữ phong cách trẻ trung, dễ phối với đầm, quần jeans hoặc chân váy.",
+                                "Blue",
+                                Set.of("S", "M", "L", "XL"),
+                                Set.of("Blue", "Light Blue"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, outerwear, catNew);
 
-                Product p31 = Product.builder()
-                                .productName("Luxury Handbag")
-                                .brandName("GUCCI")
-                                .slug("luxury-handbag-gucci")
-                                .imageUrl("/images/z7896061153845_9b96b466a48f9b69b37bef5bba366cd6.jpg")
-                                .salePrice(1200.0)
-                                .comparePrice(0.0)
-                                .quantity(50)
-                                .shortDescription("Túi xách da GUCCI sang trọng quý phái")
-                                .productDescription(
-                                                "Túi xách da cao cấp từ thương hiệu xa xỉ GUCCI, thiết kế đẳng cấp thượng lưu.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(0)
-                                .sizes(new HashSet<>(Set.of("One Size")))
-                                .colors(new HashSet<>(Set.of("Black", "Beige")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Faux Leather Jacket", "Pull&Bear", "faux-leather-jacket", "/images/women/outerwear_4.jpg",
+                                105.0, 140.0, 20,
+                                "Áo khoác da nữ cá tính",
+                                "Áo khoác da nữ chất da nhân tạo mềm, phong cách cá tính và thời trang.",
+                                "Black",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Black", "Brown"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, outerwear);
 
-                Product p32 = Product.builder()
-                                .productName("Designer Shirt")
-                                .brandName("GUCCI")
-                                .slug("designer-shirt-gucci")
-                                .imageUrl("/images/z7896061153897_a1affd7cafd0e1981adaca17c1a00f05.jpg")
-                                .salePrice(450.0)
-                                .comparePrice(0.0)
-                                .quantity(50)
-                                .shortDescription("Áo sơ mi Gucci họa tiết độc đáo")
-                                .productDescription(
-                                                "Áo sơ mi lụa Gucci in họa tiết đặc trưng nổi bật và cá tính thời thượng.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(0)
-                                .sizes(new HashSet<>(Set.of("S", "M", "L", "XL")))
-                                .colors(new HashSet<>(Set.of("White", "Black")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Wool Blend Coat", "Uniqlo", "wool-blend-coat", "/images/women/outerwear_5.jpg",
+                                135.0, 170.0, 16,
+                                "Áo khoác dạ nữ dáng dài",
+                                "Áo khoác dạ nữ pha len, dáng dài sang trọng, phù hợp mùa đông.",
+                                "Camel",
+                                Set.of("S", "M", "L"),
+                                Set.of("Camel", "Grey", "Black"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, outerwear, catNew);
 
-                Product p33 = Product.builder()
-                                .productName("Spring Jacket")
-                                .brandName("Jack & Jones")
-                                .slug("spring-jacket-jj")
-                                .imageUrl("/images/z7896061215982_3e3ff4b587a384f8f26741ae8971bdd5.jpg")
-                                .salePrice(89.0)
-                                .comparePrice(0.0)
-                                .quantity(50)
-                                .shortDescription("Áo khoác nhẹ Jack & Jones cho mùa xuân")
-                                .productDescription(
-                                                "Áo khoác nhẹ Jack & Jones phong cách trẻ trung năng động cho ngày xuân mát mẻ.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(0)
-                                .sizes(new HashSet<>(Set.of("M", "L", "XL")))
-                                .colors(new HashSet<>(Set.of("Black", "Blue")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                // =========================
+                // PANTS
+                // =========================
+                seedProduct("High Waist Trousers", "Mango", "high-waist-trousers", "/images/women/pants_1.jpg",
+                                49.0, 65.0, 45,
+                                "Quần tây nữ cạp cao",
+                                "Quần tây nữ cạp cao dáng suông, phù hợp công sở và phong cách thanh lịch.",
+                                "Black",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Black", "Beige", "Grey"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, pants);
 
-                Product p34 = Product.builder()
-                                .productName("Cozy Sweater")
-                                .brandName("Blend")
-                                .slug("cozy-sweater-blend")
-                                .imageUrl("/images/z7896061244018_33d1f0a4cc39f828e69a0ff3725f7383.jpg")
-                                .salePrice(55.0)
-                                .comparePrice(0.0)
-                                .quantity(50)
-                                .shortDescription("Áo nỉ Blend ấm áp giữ nhiệt tốt")
-                                .productDescription(
-                                                "Áo nỉ dài tay chui đầu hiệu Blend chất liệu cotton nỉ bông siêu ấm áp.")
-                                .productType("simple")
-                                .published(true)
-                                .ratingAverage(5.0)
-                                .reviewCount(0)
-                                .sizes(new HashSet<>(Set.of("S", "M", "L", "XL")))
-                                .colors(new HashSet<>(Set.of("Gray", "Blue")))
-                                .tags(new HashSet<>(Set.of(tagNew)))
-                                .build();
+                seedProduct("Wide Leg Pants", "Zara", "wide-leg-pants", "/images/women/pants_2.jpg",
+                                52.0, 70.0, 38,
+                                "Quần ống rộng nữ",
+                                "Quần ống rộng nữ chất mềm rũ, tạo cảm giác thoải mái và tôn dáng.",
+                                "Cream",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Cream", "Black", "Brown"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, pants, catNew);
 
-                p4 = productRepository.save(p4);
-                p5 = productRepository.save(p5);
-                p6 = productRepository.save(p6);
-                p9 = productRepository.save(p9);
-                p11 = productRepository.save(p11);
-                p14 = productRepository.save(p14);
-                p15 = productRepository.save(p15);
-                p16 = productRepository.save(p16);
-                p17 = productRepository.save(p17);
-                p18 = productRepository.save(p18);
-                p19 = productRepository.save(p19);
-                p20 = productRepository.save(p20);
-                p21 = productRepository.save(p21);
-                p22 = productRepository.save(p22);
-                p23 = productRepository.save(p23);
-                p24 = productRepository.save(p24);
-                p25 = productRepository.save(p25);
-                p26 = productRepository.save(p26);
-                p29 = productRepository.save(p29);
-                p30 = productRepository.save(p30);
-                p31 = productRepository.save(p31);
-                p32 = productRepository.save(p32);
-                p33 = productRepository.save(p33);
-                p34 = productRepository.save(p34);
+                seedProduct("Cargo Pants Women", "Pull&Bear", "cargo-pants-women", "/images/women/pants_3.jpg",
+                                46.0, 62.0, 42,
+                                "Quần cargo nữ cá tính",
+                                "Quần cargo nữ nhiều túi, phù hợp phong cách streetwear năng động.",
+                                "Olive",
+                                Set.of("S", "M", "L", "XL"),
+                                Set.of("Olive", "Black", "Khaki"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, pants);
 
-                linkProductToCategory(p4, catNew);
-                linkProductToCategory(p5, catClothes);
-                linkProductToCategory(p6, catClothes);
-                linkProductToCategory(p9, catShoes);
-                linkProductToCategory(p11, catAccessories);
-                linkProductToCategory(p14, catClothes);
-                linkProductToCategory(p15, catClothes);
-                linkProductToCategory(p16, catClothes);
-                linkProductToCategory(p17, catClothes);
-                linkProductToCategory(p18, catClothes);
-                linkProductToCategory(p19, catClothes);
-                linkProductToCategory(p20, catClothes);
-                linkProductToCategory(p21, catClothes);
-                linkProductToCategory(p22, catClothes);
-                linkProductToCategory(p23, catAccessories);
-                linkProductToCategory(p24, catClothes);
-                linkProductToCategory(p25, catClothes, catNew);
-                linkProductToCategory(p26, catClothes, catNew);
-                linkProductToCategory(p29, catClothes, catNew);
-                linkProductToCategory(p30, catClothes, catNew);
-                linkProductToCategory(p31, catAccessories, catNew);
-                linkProductToCategory(p32, catClothes, catNew);
-                linkProductToCategory(p33, catClothes, catNew);
-                linkProductToCategory(p34, catClothes, catNew);
-                log.info("TOPS and other product data initialized successfully.");
+                seedProduct("Straight Office Pants", "H&M", "straight-office-pants", "/images/women/pants_4.jpg",
+                                44.0, 58.0, 50,
+                                "Quần công sở nữ ống đứng",
+                                "Quần công sở nữ ống đứng dễ mặc, phù hợp phối cùng áo sơ mi hoặc blazer.",
+                                "Navy",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Navy", "Black", "Grey"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, pants);
 
+                seedProduct("Pleated Pants", "Dorothy Perkins", "pleated-pants", "/images/women/pants_5.jpg",
+                                48.0, 64.0, 30,
+                                "Quần xếp ly nữ thanh lịch",
+                                "Quần xếp ly nữ cạp cao, thiết kế mềm mại và sang trọng.",
+                                "Beige",
+                                Set.of("S", "M", "L"),
+                                Set.of("Beige", "White", "Black"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, pants, catNew);
+
+                // =========================
+                // JEANS
+                // =========================
+                seedProduct("Mom Fit Jeans", "Zara", "mom-fit-jeans", "/images/women/jeans_1.jpg",
+                                55.0, 75.0, 40,
+                                "Quần jeans nữ mom fit",
+                                "Quần jeans nữ mom fit cạp cao, chất denim dày dặn và dễ phối đồ.",
+                                "Blue",
+                                Set.of("26", "27", "28", "29", "30"),
+                                Set.of("Blue", "Light Blue"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, jeans);
+
+                seedProduct("Skinny Jeans Women", "Mango", "skinny-jeans-women", "/images/women/jeans_2.jpg",
+                                49.0, 65.0, 45,
+                                "Quần skinny jeans nữ",
+                                "Quần skinny jeans nữ co giãn tốt, ôm dáng nhưng vẫn thoải mái.",
+                                "Dark Blue",
+                                Set.of("26", "27", "28", "29", "30"),
+                                Set.of("Dark Blue", "Black"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, jeans);
+
+                seedProduct("Straight Leg Jeans", "H&M", "straight-leg-jeans", "/images/women/jeans_3.jpg",
+                                52.0, 69.0, 50,
+                                "Quần jeans nữ ống đứng",
+                                "Quần jeans nữ ống đứng phong cách basic, phù hợp mặc hằng ngày.",
+                                "Light Blue",
+                                Set.of("26", "27", "28", "29", "30"),
+                                Set.of("Light Blue", "Blue"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, jeans, catNew);
+
+                seedProduct("Flared Jeans Women", "Pull&Bear", "flared-jeans-women", "/images/women/jeans_4.jpg",
+                                58.0, 78.0, 35,
+                                "Quần jeans nữ ống loe",
+                                "Quần jeans ống loe nữ phong cách retro, giúp tôn dáng và kéo dài chân.",
+                                "Blue",
+                                Set.of("26", "27", "28", "29"),
+                                Set.of("Blue", "Black"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, jeans);
+
+                seedProduct("Black High Waist Jeans", "Uniqlo", "black-high-waist-jeans", "/images/women/jeans_5.jpg",
+                                54.0, 72.0, 42,
+                                "Quần jeans đen nữ cạp cao",
+                                "Quần jeans đen cạp cao dành cho nữ, dễ phối với áo sơ mi, áo thun hoặc blazer.",
+                                "Black",
+                                Set.of("26", "27", "28", "29", "30"),
+                                Set.of("Black"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, jeans, catNew);
+
+                // =========================
+                // SHORTS
+                // =========================
+                seedProduct("Denim Shorts Women", "Zara", "denim-shorts-women", "/images/women/shorts_1.jpg",
+                                32.0, 45.0, 55,
+                                "Quần short jeans nữ",
+                                "Quần short jeans nữ cạp cao, phù hợp mùa hè và phong cách năng động.",
+                                "Blue",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Blue", "Light Blue"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, shorts);
+
+                seedProduct("Linen Shorts", "Mango", "linen-shorts", "/images/women/shorts_2.jpg",
+                                29.0, 39.0, 50,
+                                "Quần short linen nữ",
+                                "Quần short nữ chất linen thoáng mát, phù hợp đi biển hoặc dạo phố.",
+                                "Beige",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Beige", "White", "Brown"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, shorts);
+
+                seedProduct("Tailored Shorts", "H&M", "tailored-shorts", "/images/women/shorts_3.jpg",
+                                35.0, 48.0, 40,
+                                "Quần short nữ dáng công sở",
+                                "Quần short nữ dáng tailored thanh lịch, có thể phối với áo sơ mi hoặc blazer.",
+                                "Black",
+                                Set.of("S", "M", "L"),
+                                Set.of("Black", "Grey", "Cream"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, shorts, catNew);
+
+                seedProduct("Sport Shorts Women", "Adidas", "sport-shorts-women", "/images/women/shorts_4.jpg",
+                                28.0, 38.0, 60,
+                                "Quần short thể thao nữ",
+                                "Quần short thể thao nữ chất liệu co giãn, thoáng khí, phù hợp luyện tập.",
+                                "Black",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Black", "Pink", "Grey"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, shorts);
+
+                seedProduct("Pleated Mini Shorts", "Pull&Bear", "pleated-mini-shorts", "/images/women/shorts_5.jpg",
+                                31.0, 42.0, 36,
+                                "Quần short nữ xếp ly",
+                                "Quần short xếp ly nữ thiết kế trẻ trung, phù hợp phong cách Hàn Quốc.",
+                                "Cream",
+                                Set.of("XS", "S", "M"),
+                                Set.of("Cream", "Black", "Pink"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, shorts, catNew);
+
+                // =========================
+                // SKIRTS
+                // =========================
+                seedProduct("Pleated Mini Skirt", "Zara", "pleated-mini-skirt", "/images/women/skirt_1.jpg",
+                                34.0, 46.0, 45,
+                                "Chân váy xếp ly nữ",
+                                "Chân váy xếp ly nữ phong cách trẻ trung, phù hợp đi học, đi chơi hoặc chụp ảnh.",
+                                "Black",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Black", "Grey", "Navy"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, skirts);
+
+                seedProduct("A Line Skirt", "Mango", "a-line-skirt", "/images/women/skirt_2.jpg",
+                                38.0, 52.0, 40,
+                                "Chân váy chữ A nữ",
+                                "Chân váy chữ A nữ thanh lịch, dễ phối với áo sơ mi hoặc áo blouse.",
+                                "Beige",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Beige", "Black", "Brown"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, skirts, catNew);
+
+                seedProduct("Denim Mini Skirt", "H&M", "denim-mini-skirt", "/images/women/skirt_3.jpg",
+                                36.0, 49.0, 50,
+                                "Chân váy jeans nữ",
+                                "Chân váy jeans nữ dáng ngắn, phong cách năng động và cá tính.",
+                                "Blue",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Blue", "Light Blue"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, skirts);
+
+                seedProduct("Satin Midi Skirt", "Dorothy Perkins", "satin-midi-skirt", "/images/women/skirt_4.jpg",
+                                45.0, 62.0, 30,
+                                "Chân váy satin midi nữ",
+                                "Chân váy satin dáng midi mềm mại, tạo vẻ sang trọng và nữ tính.",
+                                "Champagne",
+                                Set.of("S", "M", "L"),
+                                Set.of("Champagne", "Black", "Pink"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, skirts);
+
+                seedProduct("Floral Long Skirt", "Pull&Bear", "floral-long-skirt", "/images/women/skirt_5.jpg",
+                                41.0, 55.0, 34,
+                                "Chân váy dài hoa nữ",
+                                "Chân váy dài họa tiết hoa nhẹ nhàng, phù hợp đi chơi hoặc du lịch.",
+                                "Floral",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Pink", "White", "Blue"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, skirts, catNew);
+
+                // =========================
+                // DRESSES
+                // =========================
+                seedProduct("Elegant Evening Dress", "Dorothy Perkins", "elegant-evening-dress",
+                                "/images/women/dress_1.jpg",
+                                79.0, 105.0, 25,
+                                "Đầm dạ hội nữ thanh lịch",
+                                "Đầm dạ hội nữ thiết kế sang trọng, phù hợp tiệc tối, sự kiện hoặc lễ kỷ niệm.",
+                                "Red",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Red", "Black", "Navy"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, dresses);
+
+                seedProduct("Floral Summer Dress", "Mango", "floral-summer-dress", "/images/women/dress_2.jpg",
+                                55.0, 72.0, 40,
+                                "Đầm hoa nữ mùa hè",
+                                "Đầm hoa nữ chất liệu nhẹ, thoáng mát, phù hợp đi chơi, du lịch hoặc dạo phố.",
+                                "Floral",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Pink", "White", "Yellow"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, dresses, catNew);
+
+                seedProduct("Bodycon Mini Dress", "Zara", "bodycon-mini-dress", "/images/women/dress_3.jpg",
+                                49.0, 65.0, 35,
+                                "Đầm body nữ dáng ngắn",
+                                "Đầm body nữ ôm dáng, phong cách hiện đại, phù hợp đi tiệc hoặc hẹn hò.",
+                                "Black",
+                                Set.of("XS", "S", "M"),
+                                Set.of("Black", "Red", "White"),
+                                Set.of(tagWomen, tagSale),
+                                catClothes, dresses);
+
+                seedProduct("Korean Shirt Dress", "H&M", "korean-shirt-dress", "/images/women/dress_4.jpg",
+                                46.0, 60.0, 42,
+                                "Đầm sơ mi nữ Hàn Quốc",
+                                "Đầm sơ mi nữ phong cách Hàn Quốc, dễ mặc và phù hợp nhiều dáng người.",
+                                "Blue",
+                                Set.of("S", "M", "L"),
+                                Set.of("Blue", "White", "Beige"),
+                                Set.of(tagWomen, tagClothes),
+                                catClothes, dresses);
+
+                seedProduct("Satin Slip Dress", "Pull&Bear", "satin-slip-dress", "/images/women/dress_5.jpg",
+                                59.0, 78.0, 30,
+                                "Đầm hai dây satin nữ",
+                                "Đầm slip dress chất satin mềm mịn, tạo vẻ nữ tính và sang trọng.",
+                                "Champagne",
+                                Set.of("XS", "S", "M", "L"),
+                                Set.of("Champagne", "Black", "Pink"),
+                                Set.of(tagWomen, tagNew),
+                                catClothes, dresses, catNew);
+
+                // =========================
+                // SHOES
+                // =========================
+                seedProduct("White Women Sneakers", "Adidas", "white-women-sneakers", "/images/women/shoes_1.jpg",
+                                85.0, 110.0, 30,
+                                "Giày sneaker trắng nữ",
+                                "Giày sneaker nữ màu trắng basic, dễ phối với váy, quần jeans hoặc đồ thể thao.",
+                                "White",
+                                Set.of("36", "37", "38", "39"),
+                                Set.of("White", "Pink"),
+                                Set.of(tagWomen, tagShoes, tagNew),
+                                catShoes, catNew);
+
+                seedProduct("High Heel Sandals", "Charles & Keith", "high-heel-sandals", "/images/women/shoes_2.jpg",
+                                70.0, 95.0, 25,
+                                "Giày cao gót sandal nữ",
+                                "Giày cao gót sandal nữ quai mảnh, phù hợp đi tiệc hoặc sự kiện.",
+                                "Black",
+                                Set.of("35", "36", "37", "38", "39"),
+                                Set.of("Black", "Nude"),
+                                Set.of(tagWomen, tagShoes),
+                                catShoes);
+
+                seedProduct("Ballet Flats", "Mango", "ballet-flats", "/images/women/shoes_3.jpg",
+                                45.0, 60.0, 40,
+                                "Giày búp bê nữ nhẹ nhàng",
+                                "Giày búp bê nữ đế thấp, mang êm chân, phù hợp đi học hoặc đi làm.",
+                                "Cream",
+                                Set.of("35", "36", "37", "38", "39"),
+                                Set.of("Cream", "Black", "Pink"),
+                                Set.of(tagWomen, tagShoes, tagSale),
+                                catShoes);
+
+                seedProduct("Platform Loafers Women", "Zara", "platform-loafers-women", "/images/women/shoes_4.jpg",
+                                78.0, 105.0, 22,
+                                "Giày loafer nữ đế cao",
+                                "Giày loafer nữ đế cao phong cách hiện đại, phù hợp phối với blazer hoặc chân váy.",
+                                "Black",
+                                Set.of("36", "37", "38", "39"),
+                                Set.of("Black", "Brown"),
+                                Set.of(tagWomen, tagShoes, tagNew),
+                                catShoes, catNew);
+
+                seedProduct("Summer Flat Sandals", "H&M", "summer-flat-sandals", "/images/women/shoes_5.jpg",
+                                35.0, 48.0, 45,
+                                "Dép sandal nữ mùa hè",
+                                "Sandal nữ đế bệt thoải mái, phù hợp đi biển, đi chơi hoặc mặc hằng ngày.",
+                                "Beige",
+                                Set.of("35", "36", "37", "38", "39"),
+                                Set.of("Beige", "White", "Brown"),
+                                Set.of(tagWomen, tagShoes),
+                                catShoes);
+
+                // =========================
+                // ACCESSORIES
+                // =========================
+                seedProduct("Mini Leather Handbag", "Charles & Keith", "mini-leather-handbag",
+                                "/images/women/accessory_1.jpg",
+                                89.0, 120.0, 20,
+                                "Túi xách mini nữ da mềm",
+                                "Túi xách mini nữ chất liệu da mềm, thiết kế nhỏ gọn, phù hợp đi chơi hoặc dự tiệc.",
+                                "Black",
+                                Set.of("One Size"),
+                                Set.of("Black", "Beige", "Pink"),
+                                Set.of(tagWomen, tagAccessories, tagNew),
+                                catAccessories, catNew);
+
+                seedProduct("Pearl Necklace", "Mango", "pearl-necklace", "/images/women/accessory_2.jpg",
+                                29.0, 39.0, 35,
+                                "Dây chuyền ngọc trai nữ",
+                                "Dây chuyền ngọc trai nữ thiết kế thanh lịch, phù hợp phối với đầm hoặc áo blouse.",
+                                "Pearl",
+                                Set.of("One Size"),
+                                Set.of("White", "Gold"),
+                                Set.of(tagWomen, tagAccessories),
+                                catAccessories);
+
+                seedProduct("Fashion Sunglasses", "Zara", "fashion-sunglasses", "/images/women/accessory_3.jpg",
+                                32.0, 45.0, 40,
+                                "Kính mát nữ thời trang",
+                                "Kính mát nữ thiết kế hiện đại, phù hợp du lịch, dạo phố và chụp ảnh.",
+                                "Black",
+                                Set.of("One Size"),
+                                Set.of("Black", "Brown"),
+                                Set.of(tagWomen, tagAccessories, tagSale),
+                                catAccessories);
+
+                seedProduct("Silk Hair Scarf", "H&M", "silk-hair-scarf", "/images/women/accessory_4.jpg",
+                                18.0, 25.0, 50,
+                                "Khăn lụa buộc tóc nữ",
+                                "Khăn lụa nhỏ dành cho nữ, có thể dùng buộc tóc, thắt túi hoặc phối trang phục.",
+                                "Floral",
+                                Set.of("One Size"),
+                                Set.of("Pink", "Blue", "White"),
+                                Set.of(tagWomen, tagAccessories),
+                                catAccessories);
+
+                seedProduct("Elegant Shoulder Bag", "GUCCI", "elegant-shoulder-bag", "/images/women/accessory_5.jpg",
+                                650.0, 790.0, 8,
+                                "Túi đeo vai nữ sang trọng",
+                                "Túi đeo vai nữ cao cấp, thiết kế sang trọng, phù hợp phong cách thanh lịch.",
+                                "Brown",
+                                Set.of("One Size"),
+                                Set.of("Brown", "Black", "Beige"),
+                                Set.of(tagWomen, tagAccessories, tagNew),
+                                catAccessories, catNew);
+
+                log.info("Seeded women products successfully. Total products: {}", productRepository.count());
         }
 
-        private void linkProductToCategory(Product product, Category... categories) {
+        private Tag getOrCreateTag(String tagName) {
+                return tagRepository.findByTagNameIgnoreCase(tagName)
+                                .orElseGet(() -> tagRepository.save(Tag.builder()
+                                                .tagName(tagName)
+                                                .build()));
+        }
+
+        private Category getOrCreateCategory(String name, String description, String image, Category parent) {
+                Category category = categoryRepository.findByCategoryNameIgnoreCase(name)
+                                .orElseGet(() -> Category.builder()
+                                                .categoryName(name)
+                                                .build());
+
+                category.setCategoryName(name);
+                category.setCategoryDescription(description);
+                category.setImage(image);
+                category.setActive(true);
+
+                if (parent != null) {
+                        category.setParent(parent);
+                }
+
+                return categoryRepository.save(category);
+        }
+
+        private void seedProduct(
+                        String productName,
+                        String brandName,
+                        String slug,
+                        String imageUrl,
+                        Double salePrice,
+                        Double comparePrice,
+                        Integer quantity,
+                        String shortDescription,
+                        String productDescription,
+                        String note,
+                        Set<String> sizes,
+                        Set<String> colors,
+                        Set<Tag> tags,
+                        Category... categories) {
+                Product product = productRepository.findBySlug(slug).orElseGet(Product::new);
+
+                if (product.getId() == null) {
+                        product.setProductName(productName);
+                        product.setBrandName(brandName);
+                        product.setSlug(slug);
+                        product.setImageUrl(imageUrl);
+                        product.setSalePrice(salePrice);
+                        product.setComparePrice(comparePrice);
+                        product.setQuantity(quantity);
+                        product.setShortDescription(shortDescription);
+                        product.setProductDescription(productDescription);
+                        product.setProductType("simple");
+                        product.setPublished(true);
+                        product.setDisableOutOfStock(false);
+                        product.setRatingAverage(5.0);
+                        product.setReviewCount(0);
+                        product.setNote(note);
+                        product.setSizes(new HashSet<>(sizes));
+                        product.setColors(new HashSet<>(colors));
+                }
+
+                if (product.getTags() == null) {
+                        product.setTags(new HashSet<>());
+                }
+                product.getTags().addAll(tags);
+
                 if (product.getCategories() == null) {
                         product.setCategories(new HashSet<>());
                 }
-                boolean modified = false;
-                for (Category category : categories) {
-                        boolean exists = product.getCategories().stream()
-                                        .anyMatch(c -> c.getId().equals(category.getId()));
-                        if (!exists) {
-                                product.getCategories().add(category);
-                                modified = true;
-                        }
-                }
-                if (modified) {
-                        productRepository.save(product);
-                }
+                product.getCategories().addAll(Set.of(categories));
+
+                productRepository.save(product);
         }
 }

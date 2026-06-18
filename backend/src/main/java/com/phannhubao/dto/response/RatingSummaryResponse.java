@@ -15,4 +15,5 @@ public class RatingSummaryResponse {
     private double averageRating;
     private int totalRatings;
     private Map<Integer, Integer> ratingsCount;
+    private boolean hasUserReviewed;
 }

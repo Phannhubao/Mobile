@@ -84,26 +84,26 @@ public class AuthApplication {
                                 .updatedAt(java.time.OffsetDateTime.now())
                                 .build()));
 
-                // Seed Orders (12 orders) if count is 0
-                if (orderRepository.countByCustomerUserId(userId) == 0) {
-                    final com.phannhubao.entity.OrderStatus defaultStatus = orderStatusRepository.findAll().stream().findFirst()
-                            .orElseGet(() -> orderStatusRepository.save(com.phannhubao.entity.OrderStatus.builder()
-                                    .statusName("Delivered")
-                                    .color("#4CAF50")
-                                    .createdAt(java.time.OffsetDateTime.now())
-                                    .updatedAt(java.time.OffsetDateTime.now())
-                                    .build()));
+                 // Seed Orders (12 orders) if count is 0
+                // if (orderRepository.countByCustomerUserId(userId) == 0) {
+                //     final com.phannhubao.entity.OrderStatus defaultStatus = orderStatusRepository.findAll().stream().findFirst()
+                //             .orElseGet(() -> orderStatusRepository.save(com.phannhubao.entity.OrderStatus.builder()
+                //                     .statusName("Delivered")
+                //                     .color("#4CAF50")
+                //                     .createdAt(java.time.OffsetDateTime.now())
+                //                     .updatedAt(java.time.OffsetDateTime.now())
+                //                     .build()));
 
-                    for (int i = 1; i <= 12; i++) {
-                        final int daysAgo = i;
-                        orderRepository.save(com.phannhubao.entity.Order.builder()
-                                .customer(customer)
-                                .createdAt(java.time.OffsetDateTime.now().minusDays(daysAgo))
-                                .orderStatus(defaultStatus)
-                                .build());
-                    }
-                    System.out.println(">>> Seeded 12 sample orders for user: " + userId + " <<<");
-                }
+                //     for (int i = 1; i <= 12; i++) {
+                //         final int daysAgo = i;
+                //         orderRepository.save(com.phannhubao.entity.Order.builder()
+                //                 .customer(customer)
+                //                 .createdAt(java.time.OffsetDateTime.now().minusDays(daysAgo))
+                //                 .orderStatus(defaultStatus)
+                //                 .build());
+                //     }
+                //     System.out.println(">>> Seeded 12 sample orders for user: " + userId + " <<<");
+                // }
 
                 // Seed Addresses (3 addresses) if count is 0
                 if (addressRepository.countByCustomerUserId(userId) == 0) {
@@ -162,22 +162,22 @@ public class AuthApplication {
                 }
 
                 // Seed Reviews (4 reviews) if count is 0
-                if (reviewRepository.countByUserId(userId) == 0) {
-                    final java.util.List<com.phannhubao.entity.Product> products = productRepository.findAll();
-                    if (!products.isEmpty()) {
-                        for (int i = 1; i <= 4; i++) {
-                            final com.phannhubao.entity.Product product = (products.size() >= i) ? products.get(i - 1) : products.get(0);
-                            reviewRepository.save(com.phannhubao.entity.Review.builder()
-                                    .user(dbUser)
-                                    .product(product)
-                                    .content("Sản phẩm rất tốt, giao hàng nhanh " + i)
-                                    .rating(5)
-                                    .createdAt(java.time.OffsetDateTime.now())
-                                    .build());
-                        }
-                        System.out.println(">>> Seeded 4 product reviews for user: " + userId + " <<<");
-                    }
-                }
+                // if (reviewRepository.countByUserId(userId) == 0) {
+                //     final java.util.List<com.phannhubao.entity.Product> products = productRepository.findAll();
+                //     if (!products.isEmpty()) {
+                //         for (int i = 1; i <= 4; i++) {
+                //             final com.phannhubao.entity.Product product = (products.size() >= i) ? products.get(i - 1) : products.get(0);
+                //             reviewRepository.save(com.phannhubao.entity.Review.builder()
+                //                     .user(dbUser)
+                //                     .product(product)
+                //                     .content("Sản phẩm rất tốt, giao hàng nhanh " + i)
+                //                     .rating(5)
+                //                     .createdAt(java.time.OffsetDateTime.now())
+                //                     .build());
+                //         }
+                //         System.out.println(">>> Seeded 4 product reviews for user: " + userId + " <<<");
+                //     }
+                // }
             }
         };
     }

@@ -1883,11 +1883,23 @@ class _ProfileTabState extends State<_ProfileTab> {
                   ),
                   child: CircleAvatar(
                     radius: 32 * widget.scale,
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: const Color(0xFFDB3022).withOpacity(0.1),
                     backgroundImage: user?.avatarUrl != null &&
                             user!.avatarUrl!.isNotEmpty
                         ? NetworkImage(user.avatarUrl!) as ImageProvider
-                        : const AssetImage('assets/images/jang_wonyoung.jpg'),
+                        : null,
+                    child: user?.avatarUrl == null || user!.avatarUrl!.isEmpty
+                        ? Text(
+                            (user?.name ?? 'U').isNotEmpty
+                                ? (user?.name ?? 'U')[0].toUpperCase()
+                                : 'U',
+                            style: GoogleFonts.inter(
+                              fontSize: 24 * widget.scale,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFFDB3022),
+                            ),
+                          )
+                        : null,
                   ),
                 ),
                 SizedBox(width: 18 * widget.scale),
@@ -1960,26 +1972,6 @@ class _ProfileTabState extends State<_ProfileTab> {
             onTap: () {},
           ),
           _buildMenuItem(
-            title: 'Product Management',
-            subtitle: 'Add, edit or delete products (Admin)',
-            scale: widget.scale,
-            onTap: () {
-              setState(() {
-                _currentView = 'admin_products';
-              });
-            },
-          ),
-          _buildMenuItem(
-            title: 'Category & Tag Management',
-            subtitle: 'Add, edit or delete categories and tags (Admin)',
-            scale: widget.scale,
-            onTap: () {
-              setState(() {
-                _currentView = 'admin_catalog';
-              });
-            },
-          ),
-          _buildMenuItem(
             title: 'Settings',
             subtitle: 'Notifications, password',
             scale: widget.scale,
@@ -1988,103 +1980,6 @@ class _ProfileTabState extends State<_ProfileTab> {
                 _currentView = 'settings';
               });
             },
-          ),
-          SizedBox(height: 16 * widget.scale),
-          // Simulation Dashboard Panel
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16 * widget.scale),
-            child: Container(
-              padding: EdgeInsets.all(16 * widget.scale),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16 * widget.scale),
-                border: Border.all(color: const Color(0x0A000000)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.02),
-                    blurRadius: 8 * widget.scale,
-                    offset: Offset(0, 4 * widget.scale),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.dashboard_customize,
-                          color: const Color(0xFFDB3022),
-                          size: 18 * widget.scale),
-                      SizedBox(width: 8 * widget.scale),
-                      Text(
-                        'Database Sync Simulation',
-                        style: GoogleFonts.outfit(
-                          fontSize: 14 * widget.scale,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF222222),
-                        ),
-                      ),
-                      if (_statsLoading) ...[
-                        const Spacer(),
-                        SizedBox(
-                          width: 12 * widget.scale,
-                          height: 12 * widget.scale,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 1.5,
-                            color: Color(0xFFDB3022),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  SizedBox(height: 6 * widget.scale),
-                  Text(
-                    'Tap buttons below to simulate actual database writes. Values will auto-increment and synchronize instantly!',
-                    style: GoogleFonts.inter(
-                      fontSize: 10.5 * widget.scale,
-                      color: const Color(0xFF9B9B9B),
-                    ),
-                  ),
-                  SizedBox(height: 12 * widget.scale),
-                  Wrap(
-                    spacing: 8 * widget.scale,
-                    runSpacing: 8 * widget.scale,
-                    children: [
-                      _buildSimulationButton(
-                        label: '+ Order',
-                        icon: Icons.shopping_bag_outlined,
-                        onTap: () => _simulateAdd('order'),
-                        scale: widget.scale,
-                      ),
-                      _buildSimulationButton(
-                        label: '+ Address',
-                        icon: Icons.location_on_outlined,
-                        onTap: () => _simulateAdd('address'),
-                        scale: widget.scale,
-                      ),
-                      _buildSimulationButton(
-                        label: '+ Card',
-                        icon: Icons.credit_card_outlined,
-                        onTap: () => _simulateAdd('card'),
-                        scale: widget.scale,
-                      ),
-                      _buildSimulationButton(
-                        label: '+ Promo',
-                        icon: Icons.local_offer_outlined,
-                        onTap: () => _simulateAdd('coupon'),
-                        scale: widget.scale,
-                      ),
-                      _buildSimulationButton(
-                        label: '+ Review',
-                        icon: Icons.rate_review_outlined,
-                        onTap: () => _simulateAdd('review'),
-                        scale: widget.scale,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
           ),
           SizedBox(height: 24 * widget.scale),
           _buildMenuItem(

@@ -1,4 +1,5 @@
 com\phannhubao\dto\request\CategoryRequest.class
+com\phannhubao\dto\request\AddressRequest$AddressRequestBuilder.class
 com\phannhubao\dto\request\CartItemUpdateRequest.class
 com\phannhubao\controller\AuthController.class
 com\phannhubao\entity\Sell$SellBuilder.class
@@ -163,6 +164,7 @@ com\phannhubao\dto\request\ProfileUpdateRequest$ProfileUpdateRequestBuilder.clas
 com\phannhubao\repository\CouponRepository.class
 com\phannhubao\repository\CustomerRepository.class
 com\phannhubao\repository\ShippingZoneRepository.class
+com\phannhubao\config\ClothesCategoryInitializer.class
 com\phannhubao\config\DataInitializer.class
 com\phannhubao\config\SecurityConfig.class
 com\phannhubao\repository\ProductCouponRepository.class
@@ -171,6 +173,7 @@ com\phannhubao\config\ReviewAggregateMigration.class
 com\phannhubao\dto\response\AuthResponse$AuthResponseBuilder.class
 com\phannhubao\entity\Review$ReviewBuilder.class
 com\phannhubao\repository\OrderItemRepository.class
+com\phannhubao\dto\request\AddressRequest.class
 com\phannhubao\dto\response\OrderProductItemResponse.class
 com\phannhubao\config\MvcConfig.class
 com\phannhubao\dto\request\OrderCreateRequest$OrderCreateRequestBuilder.class

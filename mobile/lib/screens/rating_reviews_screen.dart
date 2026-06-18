@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../models/rating_summary.dart';
 import '../services/product_service.dart';
+import '../utils/constants.dart';
 
 class RatingReviewsScreen extends StatefulWidget {
   final String productName;
@@ -18,11 +19,20 @@ class RatingReviewsScreen extends StatefulWidget {
 }
 
 class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
+  static final Map<String, List<String>> _localReviewPhotos = {};
   bool _withPhotoOnly = false;
   RatingSummary? _ratingSummary;
   bool _isLoadingSummary = true;
   List<Map<String, dynamic>> _serverReviews = [];
   bool _isLoadingReviews = true;
+
+  String _resolveReviewPhotoUrl(String photoUrl) {
+    if (photoUrl.isEmpty) return '';
+    if (!kIsWeb && File(photoUrl).existsSync()) {
+      return photoUrl;
+    }
+    return AppConstants.resolveUrl(photoUrl);
+  }
 
   @override
   void initState() {
@@ -44,8 +54,20 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
   Future<void> _loadReviews() async {
     final reviews = await ProductService().getProductReviews(widget.productId);
     if (mounted) {
+      final processedReviews = reviews.map((r) {
+        final comment = r['content'] ?? r['comment'] ?? '';
+        if (_localReviewPhotos.containsKey(comment)) {
+          final localPhotos = _localReviewPhotos[comment]!;
+          final mutableReview = Map<String, dynamic>.from(r);
+          mutableReview['photos'] = localPhotos;
+          mutableReview['hasPhoto'] = true;
+          return mutableReview;
+        }
+        return r;
+      }).toList();
+
       setState(() {
-        _serverReviews = reviews;
+        _serverReviews = processedReviews;
         _isLoadingReviews = false;
       });
     }
@@ -228,6 +250,10 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
             bottom: 24 * scale,
             child: FloatingActionButton.extended(
               onPressed: () {
+                if (_ratingSummary?.hasUserReviewed == true) {
+                  _showAlreadyReviewedDialog(context, scale);
+                  return;
+                }
                 _showWriteReviewBottomSheet(context, scale);
               },
               backgroundColor: const Color(0xFFDB3022),
@@ -429,12 +455,13 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                     itemCount: (review['photos'] as List).length,
                     itemBuilder: (context, idx) {
                       final photoUrl = review['photos'][idx];
+                      final resolvedUrl = _resolveReviewPhotoUrl(photoUrl);
                       return Padding(
                         padding: EdgeInsets.only(right: 12 * scale),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8 * scale),
                           child: _buildImageWidget(
-                              photoUrl, 104 * scale, 104 * scale),
+                              resolvedUrl, 104 * scale, 104 * scale),
                         ),
                       );
                     },
@@ -533,6 +560,82 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showAlreadyReviewedDialog(BuildContext context, double scale) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          alignment: Alignment.topCenter,
+          insetPadding: EdgeInsets.only(
+            top: 80 * scale,
+            left: 16 * scale,
+            right: 16 * scale,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16 * scale),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(20 * scale),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: const Color(0xFFDB3022),
+                  size: 48 * scale,
+                ),
+                SizedBox(height: 16 * scale),
+                Text(
+                  'Thông báo',
+                  style: GoogleFonts.outfit(
+                    fontSize: 18 * scale,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF222222),
+                  ),
+                ),
+                SizedBox(height: 8 * scale),
+                Text(
+                  'Bạn đã đánh giá sản phẩm này rồi.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 14 * scale,
+                    color: const Color(0xFF9B9B9B),
+                  ),
+                ),
+                SizedBox(height: 24 * scale),
+                SizedBox(
+                  width: double.infinity,
+                  height: 44 * scale,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext); // Close dialog
+                      Navigator.pop(context); // Go back to product detail screen
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFDB3022),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22 * scale),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'QUAY LẠI SẢN PHẨM',
+                      style: GoogleFonts.inter(
+                        fontSize: 13 * scale,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -831,7 +934,7 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                                   );
 
                                   try {
-                                    final success = await ProductService().createReview(
+                                    final errorMsg = await ProductService().createReview(
                                       widget.productId,
                                       rating,
                                       content,
@@ -840,7 +943,10 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                                     // Pop loading indicator
                                     Navigator.pop(ctx);
 
-                                    if (success) {
+                                    if (errorMsg == null) {
+                                      if (photos.isNotEmpty) {
+                                        _localReviewPhotos[content] = List.from(photos);
+                                      }
                                       // Reload from server
                                       _loadSummary();
                                       _loadReviews();
@@ -861,14 +967,18 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
                                         ),
                                       );
                                     } else {
-                                      ScaffoldMessenger.of(ctx).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Gửi đánh giá thất bại. Vui lòng đăng nhập!',
+                                      if (errorMsg.contains('đã đánh giá') || errorMsg.contains('already reviewed')) {
+                                        Navigator.pop(ctx); // Close preview bottom sheet
+                                        Navigator.pop(context); // Close write review bottom sheet
+                                        _showAlreadyReviewedDialog(context, scale);
+                                      } else {
+                                        ScaffoldMessenger.of(ctx).showSnackBar(
+                                          SnackBar(
+                                            content: Text(errorMsg),
+                                            backgroundColor: const Color(0xFFDB3022),
                                           ),
-                                          backgroundColor: Color(0xFFDB3022),
-                                        ),
-                                      );
+                                        );
+                                      }
                                     }
                                   } catch (e) {
                                     Navigator.pop(ctx); // Pop loading indicator if crash

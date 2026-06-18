@@ -2,11 +2,13 @@ class RatingSummary {
   final double averageRating;
   final int totalRatings;
   final Map<int, int> ratingsCount;
+  final bool hasUserReviewed;
 
   RatingSummary({
     required this.averageRating,
     required this.totalRatings,
     required this.ratingsCount,
+    this.hasUserReviewed = false,
   });
 
   factory RatingSummary.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class RatingSummary {
       averageRating: (json['averageRating'] ?? 0.0).toDouble(),
       totalRatings: json['totalRatings'] ?? 0,
       ratingsCount: parsedCounts,
+      hasUserReviewed: json['hasUserReviewed'] ?? false,
     );
   }
 }

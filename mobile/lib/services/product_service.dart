@@ -215,12 +215,12 @@ class ProductService {
     }
   }
 
-  Future<bool> createReview(String productId, int rating, String content) async {
+  Future<String?> createReview(String productId, int rating, String content) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString(AppConstants.accessTokenKey);
       if (token == null) {
-        throw Exception('Not authenticated');
+        return 'Vui lòng đăng nhập!';
       }
 
       final response = await http.post(
@@ -236,10 +236,15 @@ class ProductService {
         }),
       );
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) return null;
+      if (response.statusCode == 409) {
+        final body = jsonDecode(utf8.decode(response.bodyBytes));
+        return body['message'] ?? 'Bạn đã đánh giá sản phẩm này rồi';
+      }
+      return 'Gửi đánh giá thất bại';
     } catch (e) {
       print('>>> Error creating review: $e');
-      return false;
+      return 'Đã xảy ra lỗi: $e';
     }
   }
 }

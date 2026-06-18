@@ -73,7 +73,7 @@ spring:
       on-profile: postgresql
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/abcv
+    url: jdbc:postgresql://localhost:5432/abao
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: 1

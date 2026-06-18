@@ -27,17 +27,19 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
 
-    public RatingSummaryResponse getRatingSummaryForProduct(UUID productId) {
+    public RatingSummaryResponse getRatingSummaryForProduct(UUID productId, Long userId) {
         List<Review> reviews = reviewRepository.findByProductId(productId);
         
         int totalRatings = reviews.size();
         if (totalRatings == 0) {
             Map<Integer, Integer> emptyCounts = new HashMap<>();
             for (int i = 1; i <= 5; i++) emptyCounts.put(i, 0);
+            boolean hasUserReviewed = userId != null && reviewRepository.existsByUserIdAndProductId(userId, productId);
             return RatingSummaryResponse.builder()
                     .averageRating(0.0)
                     .totalRatings(0)
                     .ratingsCount(emptyCounts)
+                    .hasUserReviewed(hasUserReviewed)
                     .build();
         }
 
@@ -57,10 +59,13 @@ public class ReviewService {
         // Round to 1 decimal place
         average = Math.round(average * 10.0) / 10.0;
 
+        boolean hasUserReviewed = userId != null && reviewRepository.existsByUserIdAndProductId(userId, productId);
+
         return RatingSummaryResponse.builder()
                 .averageRating(average)
                 .totalRatings(totalRatings)
                 .ratingsCount(counts)
+                .hasUserReviewed(hasUserReviewed)
                 .build();
     }
 
@@ -90,6 +95,9 @@ public class ReviewService {
 
     @Transactional
     public Review createReview(UUID productId, User user, ReviewRequest request) {
+        if (reviewRepository.existsByUserIdAndProductId(user.getId(), productId)) {
+            throw new IllegalStateException("Bạn đã đánh giá sản phẩm này rồi");
+        }
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
         

@@ -20,6 +20,7 @@ E:\Mobile\backend\src\main\java\com\phannhubao\controller\ReviewController.java
 E:\Mobile\backend\src\main\java\com\phannhubao\controller\TagController.java
 E:\Mobile\backend\src\main\java\com\phannhubao\controller\UserController.java
 E:\Mobile\backend\src\main\java\com\phannhubao\controller\WishlistController.java
+E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\AddressRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\CardRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\CartItemCreateRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\CartItemUpdateRequest.java

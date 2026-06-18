@@ -23,8 +23,12 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/product/{productId}/summary")
-    public ResponseEntity<RatingSummaryResponse> getProductRatingSummary(@PathVariable UUID productId) {
-        return ResponseEntity.ok(reviewService.getRatingSummaryForProduct(productId));
+    public ResponseEntity<RatingSummaryResponse> getProductRatingSummary(
+            @PathVariable UUID productId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails != null ? userDetails.getId() : null;
+        return ResponseEntity.ok(reviewService.getRatingSummaryForProduct(productId, userId));
     }
 
     @GetMapping("/product/{productId}")
@@ -33,7 +37,7 @@ public class ReviewController {
     }
 
     @PostMapping("/product/{productId}")
-    public ResponseEntity<Review> createProductReview(
+    public ResponseEntity<?> createProductReview(
             @PathVariable UUID productId,
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody ReviewRequest request
@@ -41,6 +45,10 @@ public class ReviewController {
         if (userDetails == null) {
             return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.ok(reviewService.createReview(productId, userDetails.getUser(), request));
+        try {
+            return ResponseEntity.ok(reviewService.createReview(productId, userDetails.getUser(), request));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(java.util.Map.of("message", e.getMessage()));
+        }
     }
 }

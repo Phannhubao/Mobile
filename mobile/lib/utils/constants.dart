@@ -7,7 +7,7 @@ class AppConstants {
   );
   static const String _ngrokBaseUrl = String.fromEnvironment(
     'NGROK_BASE_URL',
-    defaultValue: 'https://1a90-14-224-164-69.ngrok-free.app',
+    defaultValue: 'https://5424-2405-4802-9399-db20-4844-7750-cd00-ce3d.ngrok-free.app',
   );
 
   static String get baseUrl {
