@@ -92,6 +92,8 @@ class _RatingReviewsScreenState extends State<RatingReviewsScreen> {
         width: width,
         height: height,
         fit: BoxFit.cover,
+        cacheWidth: (width * 2).round(),
+        cacheHeight: (height * 2).round(),
         errorBuilder: (context, error, stackTrace) =>
             _buildErrorImage(width, height),
       );
