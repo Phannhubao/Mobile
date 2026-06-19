@@ -6,6 +6,7 @@ import '../providers/favorites_provider.dart';
 import '../providers/cart_provider.dart';
 import '../utils/constants.dart';
 import 'product_detail_screen.dart';
+import 'search_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -97,7 +98,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       IconButton(
                         icon: Icon(Icons.search,
                             size: 26 * scale, color: const Color(0xFF222222)),
-                        onPressed: () {},
+                        onPressed: () => openProductSearch(context),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -305,7 +306,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             .round()
         : 0;
     final imageUrl = _buildImageUrl(product.imageUrl);
-    final rating = product.ratingAverage ?? 0.0;
+    final rating = product.displayRatingAverage;
     final reviewCount = product.reviewCount ?? 0;
     final isSoldOut = product.quantity == 0;
 
@@ -603,7 +604,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             .round()
         : 0;
     final imageUrl = _buildImageUrl(product.imageUrl);
-    final rating = product.ratingAverage ?? 0.0;
+    final rating = product.displayRatingAverage;
     final reviewCount = product.reviewCount ?? 0;
     final isSoldOut = product.quantity == 0;
 

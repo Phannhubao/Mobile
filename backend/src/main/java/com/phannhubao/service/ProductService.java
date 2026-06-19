@@ -65,7 +65,7 @@ public class ProductService {
                 .productDescription(request.getProductDescription() != null ? request.getProductDescription() : "")
                 .productType(request.getProductType() != null ? request.getProductType() : "simple")
                 .published(true)
-                .ratingAverage(5.0)
+                .ratingAverage(0.0)
                 .reviewCount(0)
                 .sizes(request.getSizes() != null ? request.getSizes() : new HashSet<>())
                 .colors(request.getColors() != null ? request.getColors() : new HashSet<>())

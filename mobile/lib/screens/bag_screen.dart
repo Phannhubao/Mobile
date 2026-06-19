@@ -5,6 +5,7 @@ import '../providers/cart_provider.dart';
 import '../providers/favorites_provider.dart';
 import '../utils/constants.dart';
 import 'checkout_screen.dart';
+import 'search_screen.dart';
 
 class BagScreen extends StatefulWidget {
   const BagScreen({super.key});
@@ -372,7 +373,7 @@ class _BagScreenState extends State<BagScreen> {
                 child: IconButton(
                   icon: Icon(Icons.search,
                       size: 26 * scale, color: const Color(0xFF222222)),
-                  onPressed: () {},
+                  onPressed: () => openProductSearch(context),
                 ),
               ),
             ),
@@ -493,7 +494,8 @@ class _BagScreenState extends State<BagScreen> {
                                                   minHeight: 32 * scale,
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsets.all(4 * scale),
+                                                  padding:
+                                                      EdgeInsets.all(4 * scale),
                                                   child: Icon(
                                                     Icons.more_vert,
                                                     color:
@@ -643,14 +645,14 @@ class _BagScreenState extends State<BagScreen> {
                                         children: [
                                           _buildQtySelector(
                                             quantity: item.quantity,
-                                            onDecrement: () => cartProvider
-                                                .decrementQuantity(
+                                            onDecrement: () =>
+                                                cartProvider.decrementQuantity(
                                               product.id,
                                               item.selectedSize,
                                               item.selectedColor,
                                             ),
-                                            onIncrement: () => cartProvider
-                                                .incrementQuantity(
+                                            onIncrement: () =>
+                                                cartProvider.incrementQuantity(
                                               product.id,
                                               item.selectedSize,
                                               item.selectedColor,

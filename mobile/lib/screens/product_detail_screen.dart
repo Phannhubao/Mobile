@@ -1493,7 +1493,7 @@ class _RelatedProductCard extends StatelessWidget {
               child: Row(
                 children: [
                   ...List.generate(5, (i) {
-                    final isFilled = i < (product.ratingAverage ?? 0).floor();
+                    final isFilled = i < product.displayRatingAverage.floor();
                     return Icon(
                       Icons.star,
                       size: 13 * scale,

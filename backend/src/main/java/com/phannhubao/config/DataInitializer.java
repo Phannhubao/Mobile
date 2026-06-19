@@ -820,7 +820,7 @@ public class DataInitializer implements CommandLineRunner {
                 product.setPublished(true);
                 product.setDisableOutOfStock(false);
                 if (product.getId() == null) {
-                        product.setRatingAverage(5.0);
+                        product.setRatingAverage(0.0);
                         product.setReviewCount(0);
                 }
                 product.setNote(note);

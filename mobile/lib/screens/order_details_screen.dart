@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'my_orders_screen.dart';
 import 'rating_reviews_screen.dart';
+import 'search_screen.dart';
 import '../utils/constants.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
@@ -67,7 +68,7 @@ class OrderDetailsScreen extends StatelessWidget {
                     color: const Color(0xFF222222),
                     size: 24 * scale,
                   ),
-                  onPressed: () {},
+                  onPressed: () => openProductSearch(context),
                 ),
               ],
             ),

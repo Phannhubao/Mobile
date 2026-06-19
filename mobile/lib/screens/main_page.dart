@@ -23,6 +23,7 @@ import 'filters_screen.dart';
 import 'admin_product_screen.dart';
 import 'admin_catalog_screen.dart';
 import 'collections_screen.dart';
+import 'search_screen.dart';
 import 'shipping_addresses_screen.dart';
 import 'payment_methods_screen.dart';
 import '../models/checkout_models.dart';
@@ -524,7 +525,7 @@ class _MainPageState extends State<MainPage> {
                 IconButton(
                   icon: Icon(Icons.search,
                       color: const Color(0xFF222222), size: 24 * scale),
-                  onPressed: () {},
+                  onPressed: () => openProductSearch(context),
                 ),
               ],
             ),
@@ -825,7 +826,7 @@ class _MainPageState extends State<MainPage> {
                 IconButton(
                   icon: Icon(Icons.search,
                       color: const Color(0xFF222222), size: 24 * scale),
-                  onPressed: () {},
+                  onPressed: () => openProductSearch(context),
                 ),
               ],
             ),
@@ -969,7 +970,7 @@ class _MainPageState extends State<MainPage> {
       sortedProducts.sort((a, b) => b.id.compareTo(a.id));
     } else if (_selectedSort == 'Customer review') {
       sortedProducts.sort(
-          (a, b) => (b.ratingAverage ?? 0.0).compareTo(a.ratingAverage ?? 0.0));
+          (a, b) => b.displayRatingAverage.compareTo(a.displayRatingAverage));
     } else if (_selectedSort == 'Price: lowest to high') {
       sortedProducts.sort((a, b) => a.salePrice.compareTo(b.salePrice));
     } else if (_selectedSort == 'Price: highest to low') {
@@ -999,7 +1000,7 @@ class _MainPageState extends State<MainPage> {
                 IconButton(
                   icon: Icon(Icons.search,
                       color: const Color(0xFF222222), size: 24 * scale),
-                  onPressed: () {},
+                  onPressed: () => openProductSearch(context),
                 ),
               ],
             ),
@@ -1207,7 +1208,7 @@ class _MainPageState extends State<MainPage> {
       sortedProducts.sort((a, b) => b.id.compareTo(a.id));
     } else if (_selectedSort == 'Customer review') {
       sortedProducts.sort(
-          (a, b) => (b.ratingAverage ?? 0.0).compareTo(a.ratingAverage ?? 0.0));
+          (a, b) => b.displayRatingAverage.compareTo(a.displayRatingAverage));
     } else if (_selectedSort == 'Price: lowest to high') {
       sortedProducts.sort((a, b) => a.salePrice.compareTo(b.salePrice));
     } else if (_selectedSort == 'Price: highest to low') {
@@ -1237,7 +1238,7 @@ class _MainPageState extends State<MainPage> {
                 IconButton(
                   icon: Icon(Icons.search,
                       color: const Color(0xFF222222), size: 24 * scale),
-                  onPressed: () {},
+                  onPressed: () => openProductSearch(context),
                 ),
               ],
             ),
@@ -1612,7 +1613,7 @@ class _MainPageState extends State<MainPage> {
                             children: [
                               ...List.generate(5, (i) {
                                 final isFilled =
-                                    i < (product.ratingAverage ?? 0).floor();
+                                    i < product.displayRatingAverage.floor();
                                 return Icon(
                                   Icons.star,
                                   size: 13 * scale,
@@ -1866,7 +1867,7 @@ class _ProfileTabState extends State<_ProfileTab> {
               child: IconButton(
                 icon: Icon(Icons.search,
                     size: 26 * widget.scale, color: const Color(0xFF222222)),
-                onPressed: () {},
+                onPressed: () => openProductSearch(context),
               ),
             ),
           ),
@@ -1906,10 +1907,10 @@ class _ProfileTabState extends State<_ProfileTab> {
                   child: CircleAvatar(
                     radius: 32 * widget.scale,
                     backgroundColor: const Color(0xFFDB3022).withOpacity(0.1),
-                    backgroundImage: user?.avatarUrl != null &&
-                            user!.avatarUrl!.isNotEmpty
-                        ? NetworkImage(user.avatarUrl!) as ImageProvider
-                        : null,
+                    backgroundImage:
+                        user?.avatarUrl != null && user!.avatarUrl!.isNotEmpty
+                            ? NetworkImage(user.avatarUrl!) as ImageProvider
+                            : null,
                     child: user?.avatarUrl == null || user!.avatarUrl!.isEmpty
                         ? Text(
                             (user?.name ?? 'U').isNotEmpty
@@ -1973,12 +1974,13 @@ class _ProfileTabState extends State<_ProfileTab> {
             scale: widget.scale,
             onTap: () async {
               final fallbackName = (await SharedPreferences.getInstance())
-                  .getString(AppConstants.userNameKey) ?? '';
+                      .getString(AppConstants.userNameKey) ??
+                  '';
               try {
                 final data = await _authService.getUserAddresses();
                 final addresses = data
-                    .map((json) => ShippingAddressOption.fromJson(
-                        json, fallbackName: fallbackName))
+                    .map((json) => ShippingAddressOption.fromJson(json,
+                        fallbackName: fallbackName))
                     .toList();
                 if (!context.mounted) return;
                 Navigator.push(
@@ -2593,7 +2595,7 @@ class _ProductCard extends StatelessWidget {
               child: Row(
                 children: [
                   ...List.generate(5, (i) {
-                    final isFilled = i < (product.ratingAverage ?? 0).floor();
+                    final isFilled = i < product.displayRatingAverage.floor();
                     return Icon(
                       Icons.star,
                       size: 13 * scale,

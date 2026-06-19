@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/order_service.dart';
+import 'search_screen.dart';
 
 class OrderProductItem {
   final String title;
@@ -169,7 +170,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                     color: const Color(0xFF222222),
                     size: 24 * scale,
                   ),
-                  onPressed: () {},
+                  onPressed: () => openProductSearch(context),
                 ),
               ],
             ),

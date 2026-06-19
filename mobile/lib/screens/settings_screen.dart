@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/auth_service.dart';
+import 'search_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback onBack;
@@ -122,7 +123,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         SnackBar(
                           content: Text(
                             'Chức năng khôi phục mật khẩu đang phát triển!',
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                            style:
+                                GoogleFonts.inter(fontWeight: FontWeight.w500),
                           ),
                           backgroundColor: const Color(0xFF222222),
                         ),
@@ -158,12 +160,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   height: 48 * scale,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (newPasswordController.text != repeatPasswordController.text) {
+                      if (newPasswordController.text !=
+                          repeatPasswordController.text) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
                               'Mật khẩu mới không trùng khớp!',
-                              style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500),
                             ),
                             backgroundColor: const Color(0xFFDB3022),
                           ),
@@ -178,7 +182,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         SnackBar(
                           content: Text(
                             'Đổi mật khẩu thành công!',
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                            style:
+                                GoogleFonts.inter(fontWeight: FontWeight.w500),
                           ),
                           backgroundColor: const Color(0xFF2AA95C),
                           behavior: SnackBarBehavior.floating,
@@ -230,7 +235,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
-      padding: EdgeInsets.symmetric(horizontal: 20 * scale, vertical: 8 * scale),
+      padding:
+          EdgeInsets.symmetric(horizontal: 20 * scale, vertical: 8 * scale),
       child: TextField(
         controller: controller,
         obscureText: obscureText,
@@ -271,7 +277,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           // App Bar Row
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4 * scale, vertical: 8 * scale),
+            padding: EdgeInsets.symmetric(
+                horizontal: 4 * scale, vertical: 8 * scale),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -291,7 +298,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         newArrivals: _newArrivalsNotification,
                         deliveryStatus: _deliveryStatusNotification,
                       );
-                      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                      final authProvider =
+                          Provider.of<AuthProvider>(context, listen: false);
                       await authProvider.checkAuthStatus();
                     } catch (e) {
                       print('>>> Error updating settings profile: $e');
@@ -305,7 +313,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: const Color(0xFF222222),
                     size: 24 * scale,
                   ),
-                  onPressed: () {},
+                  onPressed: () => openProductSearch(context),
                 ),
               ],
             ),
@@ -460,7 +468,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
-      padding: EdgeInsets.symmetric(horizontal: 20 * scale, vertical: 8 * scale),
+      padding:
+          EdgeInsets.symmetric(horizontal: 20 * scale, vertical: 8 * scale),
       child: TextField(
         controller: controller,
         obscureText: obscureText,
@@ -492,7 +501,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildNotificationToggle(String title, bool value, ValueChanged<bool> onChanged, double scale) {
+  Widget _buildNotificationToggle(
+      String title, bool value, ValueChanged<bool> onChanged, double scale) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

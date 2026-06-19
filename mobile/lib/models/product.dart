@@ -24,6 +24,10 @@ class Product {
   final List<String> colors;
   final List<String> categoryIds;
 
+  bool get hasReviews => (reviewCount ?? 0) > 0;
+
+  double get displayRatingAverage => hasReviews ? (ratingAverage ?? 0.0) : 0.0;
+
   Product({
     required this.id,
     required this.slug,
