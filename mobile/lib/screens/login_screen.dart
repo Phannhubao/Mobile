@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import '../utils/app_theme.dart';
 import '../utils/constants.dart';
 import '../utils/social_auth.dart';
+import 'forgot_password_screen.dart';
 import 'main_page.dart';
 import 'register_screen.dart';
 
@@ -309,25 +310,31 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _forgotPassword(double scale) {
     return Align(
       alignment: Alignment.centerRight,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Forgot your password?',
-            style: TextStyle(
-              fontFamily: 'Metropolis',
-              fontSize: 14 * scale,
-              color: const Color(0xFF222222),
-              height: 1.43,
+      child: GestureDetector(
+        onTap: () => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Forgot your password?',
+              style: TextStyle(
+                fontFamily: 'Metropolis',
+                fontSize: 14 * scale,
+                color: const Color(0xFF222222),
+                height: 1.43,
+              ),
             ),
-          ),
-          SizedBox(width: 4 * scale),
-          Icon(
-            Icons.arrow_forward,
-            size: 24 * scale,
-            color: const Color(0xFFDB3022),
-          ),
-        ],
+            SizedBox(width: 4 * scale),
+            Icon(
+              Icons.arrow_forward,
+              size: 24 * scale,
+              color: const Color(0xFFDB3022),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -370,32 +377,34 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _goToRegisterButton(double scale) {
-    return SizedBox(
-      width: 343 * scale,
-      height: 48 * scale,
-      child: OutlinedButton(
-        onPressed: () {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: GestureDetector(
+        onTap: () {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const RegisterScreen()),
           );
         },
-        style: OutlinedButton.styleFrom(
-          foregroundColor: const Color(0xFFDB3022),
-          side: const BorderSide(color: Color(0xFFDB3022), width: 1.5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25 * scale),
-          ),
-        ),
-        child: Text(
-          'REGISTER',
-          style: TextStyle(
-            fontFamily: 'Metropolis',
-            fontSize: 14 * scale,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFFDB3022),
-            letterSpacing: 1.5,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Register',
+              style: TextStyle(
+                fontFamily: 'Metropolis',
+                fontSize: 14 * scale,
+                color: const Color(0xFF222222),
+                height: 1.43,
+              ),
+            ),
+            SizedBox(width: 4 * scale),
+            Icon(
+              Icons.arrow_forward,
+              size: 24 * scale,
+              color: const Color(0xFFDB3022),
+            ),
+          ],
         ),
       ),
     );

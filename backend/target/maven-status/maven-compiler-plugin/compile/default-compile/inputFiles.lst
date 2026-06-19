@@ -25,6 +25,7 @@ E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\CardRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\CartItemCreateRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\CartItemUpdateRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\CategoryRequest.java
+E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\ChangePasswordRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\LoginRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\OrderCreateRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\OrderItemRequest.java
@@ -38,6 +39,7 @@ E:\Mobile\backend\src\main\java\com\phannhubao\dto\request\TagRequest.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\response\AuthResponse.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\response\CartItemResponse.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\response\CategoryResponse.java
+E:\Mobile\backend\src\main\java\com\phannhubao\dto\response\MessageResponse.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\response\OrderCreatedResponse.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\response\OrderItemDataResponse.java
 E:\Mobile\backend\src\main\java\com\phannhubao\dto\response\OrderProductItemResponse.java

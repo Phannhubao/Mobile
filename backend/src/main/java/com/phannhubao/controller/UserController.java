@@ -1,6 +1,7 @@
 package com.phannhubao.controller;
 
 import com.phannhubao.dto.request.*;
+import com.phannhubao.dto.response.MessageResponse;
 import com.phannhubao.dto.response.OrderCreatedResponse;
 import com.phannhubao.dto.response.UserResponse;
 import com.phannhubao.dto.response.UserProfileStatsResponse;
@@ -11,6 +12,7 @@ import com.phannhubao.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,6 +33,7 @@ public class UserController {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final CartService cartService;
+    private final PasswordEncoder passwordEncoder;
 
     private Customer getOrCreateCustomer(User user) {
         return customerRepository.findByUserId(user.getId())
@@ -121,6 +124,39 @@ public class UserController {
         customerRepository.save(customer);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<MessageResponse> changePassword(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody ChangePasswordRequest request
+    ) {
+        User user = userDetails.getUser();
+
+        if (user.getPassword() == null) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Tài khoản OAuth2 không có mật khẩu"));
+        }
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Mật khẩu cũ không chính xác"));
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Mật khẩu mới không trùng khớp"));
+        }
+
+        if (request.getNewPassword().length() < 6) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Mật khẩu mới phải có ít nhất 6 ký tự"));
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new MessageResponse("Đổi mật khẩu thành công"));
     }
 
     @GetMapping("/profile-stats")

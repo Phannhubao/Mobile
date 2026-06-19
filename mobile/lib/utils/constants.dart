@@ -84,6 +84,7 @@ class AppConstants {
   static const String refreshEndpoint = '/api/auth/refresh';
   static const String logoutEndpoint = '/api/auth/logout';
   static const String meEndpoint = '/api/users/me';
+  static const String changePasswordEndpoint = '/api/users/change-password';
 
   // SharedPreferences Keys
   static const String accessTokenKey = 'access_token';

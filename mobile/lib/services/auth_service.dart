@@ -81,16 +81,16 @@ class AuthService {
           throw Exception('Lỗi parse dữ liệu: ${e.toString()}');
         }
       } else {
-        // Cố gắng parse lỗi từ JSON, nếu không thì hiển thị HTML/plain text
+        String message;
         try {
           final body = jsonDecode(response.body);
-          throw Exception(body['message'] ??
-              'Đăng nhập thất bại (HTTP ${response.statusCode})');
-        } catch (e) {
-          // Nếu không parse được JSON (HTML response), trả về error với status code
-          throw Exception(
-              'Đăng nhập thất bại - ${response.statusCode}. Kiểm tra backend URL của bạn.');
+          message = body['message'] ??
+              'Đăng nhập thất bại (HTTP ${response.statusCode})';
+        } catch (_) {
+          message =
+              'Đăng nhập thất bại - ${response.statusCode}. Kiểm tra backend URL của bạn.';
         }
+        throw Exception(message);
       }
     } catch (e) {
       if (e.toString().contains('certificate') ||
@@ -360,6 +360,32 @@ class AuthService {
         ...AppConstants.getHeaders,
       },
     );
+  }
+
+  Future<void> changePassword({
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final token = await getAccessToken();
+    final response = await _httpClient.put(
+      Uri.parse(
+          '${AppConstants.baseUrl}${AppConstants.changePasswordEndpoint}'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+        ...AppConstants.getHeaders,
+      },
+      body: jsonEncode({
+        'oldPassword': oldPassword,
+        'newPassword': newPassword,
+        'confirmPassword': confirmPassword,
+      }),
+    );
+    final body = jsonDecode(utf8.decode(response.bodyBytes));
+    if (response.statusCode != 200) {
+      throw Exception(body['message'] ?? 'Đổi mật khẩu thất bại');
+    }
   }
 
   Future<void> logout() async {

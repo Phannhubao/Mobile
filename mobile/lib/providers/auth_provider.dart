@@ -85,6 +85,29 @@ class AuthProvider extends ChangeNotifier {
     _setLoading(false);
   }
 
+  Future<String?> changePassword({
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    _setLoading(true);
+    _setError(null);
+    try {
+      await _authService.changePassword(
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+      _setLoading(false);
+      return null;
+    } catch (e) {
+      final msg = e.toString().replaceAll('Exception: ', '');
+      _setError(msg);
+      _setLoading(false);
+      return msg;
+    }
+  }
+
   void clearError() {
     _errorMessage = null;
     notifyListeners();

@@ -159,13 +159,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   width: double.infinity,
                   height: 48 * scale,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (newPasswordController.text !=
                           repeatPasswordController.text) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
                               'Mật khẩu mới không trùng khớp!',
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            backgroundColor: const Color(0xFFDB3022),
+                          ),
+                        );
+                        return;
+                      }
+                      if (newPasswordController.text.length < 6) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Mật khẩu phải có ít nhất 6 ký tự!',
+                              style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            backgroundColor: const Color(0xFFDB3022),
+                          ),
+                        );
+                        return;
+                      }
+                      final auth = Provider.of<AuthProvider>(context, listen: false);
+                      final error = await auth.changePassword(
+                        oldPassword: oldPasswordController.text,
+                        newPassword: newPasswordController.text,
+                        confirmPassword: repeatPasswordController.text,
+                      );
+                      if (error != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              error,
                               style: GoogleFonts.inter(
                                   fontWeight: FontWeight.w500),
                             ),
