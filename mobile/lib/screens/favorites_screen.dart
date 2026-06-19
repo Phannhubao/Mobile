@@ -632,7 +632,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           children: [
             // Image area
             Expanded(
-              flex: 6,
+              flex: 55,
               child: ClipRRect(
                 borderRadius:
                     BorderRadius.vertical(top: Radius.circular(8 * scale)),
@@ -751,7 +751,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
             // Info
             Expanded(
-              flex: 4,
+              flex: 45,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     10 * scale, 8 * scale, 10 * scale, 8 * scale),

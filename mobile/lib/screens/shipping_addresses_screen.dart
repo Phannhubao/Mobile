@@ -33,7 +33,8 @@ class _ShippingAddressesScreenState extends State<ShippingAddressesScreen> {
     if (_selectedIndex < 0) _selectedIndex = 0;
   }
 
-  ShippingAddressOption get _selectedAddress => _addresses[_selectedIndex];
+  ShippingAddressOption? get _selectedAddress =>
+      _addresses.isEmpty ? null : _addresses[_selectedIndex];
 
   void _closeWithSelection() {
     Navigator.pop(context, _selectedAddress);

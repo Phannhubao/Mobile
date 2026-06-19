@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
 
     public List<Product> getSaleProducts() {
-        return productRepository.findSaleProducts();
+        return productRepository.findByTagsTagNameIgnoreCase("SALE");
     }
 
     public List<Product> getNewProducts() {
@@ -173,6 +174,12 @@ public class ProductService {
     }
 
     public List<Product> getProductsByCategory(UUID categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+        List<UUID> ids = new ArrayList<>();
+        ids.add(categoryId);
+        List<Category> subCategories = categoryRepository.findByParentId(categoryId);
+        for (Category sub : subCategories) {
+            ids.add(sub.getId());
+        }
+        return productRepository.findByCategoryIds(ids);
     }
 }

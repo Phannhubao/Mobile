@@ -23,6 +23,11 @@ public class ReviewAggregateMigration implements CommandLineRunner {
     @Override
     public void run(String... args) {
         List<Product> products = productRepository.findAll();
+        boolean needsUpdate = products.stream().anyMatch(p -> p.getReviewCount() == null);
+        if (!needsUpdate) {
+            log.info("Review aggregates already up-to-date.");
+            return;
+        }
         for (Product product : products) {
             List<Review> reviews = reviewRepository.findByProductId(product.getId());
             product.setReviewCount(reviews.size());

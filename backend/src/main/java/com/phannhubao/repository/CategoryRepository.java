@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface CategoryRepository extends JpaRepository<Category, java.util.UUID> {
     java.util.Optional<Category> findByCategoryNameIgnoreCase(String categoryName);
     boolean existsByParent_Id(java.util.UUID parentId);
+    java.util.List<Category> findByParentId(java.util.UUID parentId);
 }

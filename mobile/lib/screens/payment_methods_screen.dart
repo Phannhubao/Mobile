@@ -35,7 +35,8 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     if (_selectedIndex < 0) _selectedIndex = 0;
   }
 
-  PaymentCardOption get _selectedCard => _cards[_selectedIndex];
+  PaymentCardOption? get _selectedCard =>
+      _cards.isEmpty ? null : _cards[_selectedIndex];
 
   void _closeWithSelection() {
     Navigator.pop(context, _selectedCard);

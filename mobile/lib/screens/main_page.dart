@@ -9,6 +9,7 @@ import '../providers/cart_provider.dart';
 import '../models/category.dart';
 import '../services/product_service.dart';
 import '../services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
 import 'login_screen.dart';
 import 'product_detail_screen.dart';
@@ -22,6 +23,9 @@ import 'filters_screen.dart';
 import 'admin_product_screen.dart';
 import 'admin_catalog_screen.dart';
 import 'collections_screen.dart';
+import 'shipping_addresses_screen.dart';
+import 'payment_methods_screen.dart';
+import '../models/checkout_models.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -205,9 +209,13 @@ class _MainPageState extends State<MainPage> {
       final cats = await _productService.getCategories();
 
       if (!mounted) return;
+
+      final saleIds = sales.map((p) => p.id).toSet();
+      final uniqueNews = news.where((p) => !saleIds.contains(p.id)).toList();
+
       setState(() {
         _saleProducts = sales;
-        _newProducts = news;
+        _newProducts = uniqueNews;
         _backendCategories = cats;
         _isLoading = false;
         _isCategoriesLoading = false;
@@ -952,7 +960,21 @@ class _MainPageState extends State<MainPage> {
 
   Widget _buildCategoryProductsView({required double scale}) {
     final List<String> tags = ['T-shirts', 'Crop tops', 'Sleeveless', 'Shirts'];
-    final filteredProducts = _applyFilters(_categoryProducts);
+    final filtered = _applyFilters(_categoryProducts);
+    final sortedProducts = List<Product>.from(filtered);
+    if (_selectedSort == 'Popular') {
+      sortedProducts
+          .sort((a, b) => (b.reviewCount ?? 0).compareTo(a.reviewCount ?? 0));
+    } else if (_selectedSort == 'Newest') {
+      sortedProducts.sort((a, b) => b.id.compareTo(a.id));
+    } else if (_selectedSort == 'Customer review') {
+      sortedProducts.sort(
+          (a, b) => (b.ratingAverage ?? 0.0).compareTo(a.ratingAverage ?? 0.0));
+    } else if (_selectedSort == 'Price: lowest to high') {
+      sortedProducts.sort((a, b) => a.salePrice.compareTo(b.salePrice));
+    } else if (_selectedSort == 'Price: highest to low') {
+      sortedProducts.sort((a, b) => b.salePrice.compareTo(a.salePrice));
+    }
 
     return Container(
       color: const Color(0xFFF9F9F9),
@@ -1059,20 +1081,24 @@ class _MainPageState extends State<MainPage> {
                   ),
                 ),
                 // Sorting
-                Row(
-                  children: [
-                    Icon(Icons.swap_vert,
-                        size: 18 * scale, color: const Color(0xFF222222)),
-                    SizedBox(width: 6 * scale),
-                    Text(
-                      'Price: lowest to high',
-                      style: GoogleFonts.inter(
-                        fontSize: 11 * scale,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF222222),
+                GestureDetector(
+                  onTap: () => _showSortBottomSheet(scale),
+                  behavior: HitTestBehavior.opaque,
+                  child: Row(
+                    children: [
+                      Icon(Icons.swap_vert,
+                          size: 18 * scale, color: const Color(0xFF222222)),
+                      SizedBox(width: 6 * scale),
+                      Text(
+                        _selectedSort,
+                        style: GoogleFonts.inter(
+                          fontSize: 11 * scale,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF222222),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 // Layout view switch icon
                 GestureDetector(
@@ -1100,7 +1126,7 @@ class _MainPageState extends State<MainPage> {
                       color: Color(0xFFDB3022),
                     ),
                   )
-                : filteredProducts.isEmpty
+                : sortedProducts.isEmpty
                     ? Center(
                         child: Text(
                           'Không tìm thấy sản phẩm nào',
@@ -1119,7 +1145,7 @@ class _MainPageState extends State<MainPage> {
                               mainAxisSpacing: 26 * scale,
                               childAspectRatio: 0.59,
                             ),
-                            itemCount: filteredProducts.length,
+                            itemCount: sortedProducts.length,
                             itemBuilder: (context, index) {
                               return LayoutBuilder(
                                 builder: (context, constraints) {
@@ -1127,7 +1153,7 @@ class _MainPageState extends State<MainPage> {
                                     width: constraints.maxWidth,
                                     height: constraints.maxHeight,
                                     scale: scale,
-                                    product: filteredProducts[index],
+                                    product: sortedProducts[index],
                                   );
                                 },
                               );
@@ -1136,12 +1162,12 @@ class _MainPageState extends State<MainPage> {
                         : ListView.builder(
                             padding:
                                 EdgeInsets.symmetric(horizontal: 16 * scale),
-                            itemCount: filteredProducts.length,
+                            itemCount: sortedProducts.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 24 * scale),
                                 child: _buildTopsProductRowCard(
-                                    filteredProducts[index], scale),
+                                    sortedProducts[index], scale),
                               );
                             },
                           ),
@@ -1945,19 +1971,104 @@ class _ProfileTabState extends State<_ProfileTab> {
             title: 'Shipping addresses',
             subtitle: _statsLoading ? 'Loading...' : '$_addressCount addresses',
             scale: widget.scale,
-            onTap: () {},
+            onTap: () async {
+              final fallbackName = (await SharedPreferences.getInstance())
+                  .getString(AppConstants.userNameKey) ?? '';
+              try {
+                final data = await _authService.getUserAddresses();
+                final addresses = data
+                    .map((json) => ShippingAddressOption.fromJson(
+                        json, fallbackName: fallbackName))
+                    .toList();
+                if (!context.mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ShippingAddressesScreen(
+                      addresses: addresses,
+                      selectedAddress: addresses.isNotEmpty
+                          ? addresses.first
+                          : const ShippingAddressOption(
+                              name: '',
+                              addressLine1: '',
+                              city: '',
+                              postalCode: '',
+                              country: '',
+                            ),
+                    ),
+                  ),
+                ).then((_) => _fetchStats());
+              } catch (_) {
+                if (!context.mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ShippingAddressesScreen(
+                      addresses: const [],
+                      selectedAddress: const ShippingAddressOption(
+                        name: '',
+                        addressLine1: '',
+                        city: '',
+                        postalCode: '',
+                        country: '',
+                      ),
+                    ),
+                  ),
+                ).then((_) => _fetchStats());
+              }
+            },
           ),
           _buildMenuItem(
             title: 'Payment methods',
             subtitle: _statsLoading ? 'Loading...' : _paymentMethodSummary,
             scale: widget.scale,
-            onTap: () {},
+            onTap: () async {
+              try {
+                final data = await _authService.getUserCards();
+                final cards = data
+                    .map((json) => PaymentCardOption.fromJson(json))
+                    .toList();
+                if (!context.mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PaymentMethodsScreen(
+                      cards: cards,
+                      selectedCard: cards.isNotEmpty
+                          ? cards.first
+                          : const PaymentCardOption(
+                              cardType: '',
+                              lastFour: '',
+                            ),
+                    ),
+                  ),
+                ).then((_) => _fetchStats());
+              } catch (_) {
+                if (!context.mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PaymentMethodsScreen(
+                      cards: const [],
+                      selectedCard: const PaymentCardOption(
+                        cardType: '',
+                        lastFour: '',
+                      ),
+                    ),
+                  ),
+                ).then((_) => _fetchStats());
+              }
+            },
           ),
           _buildMenuItem(
             title: 'Promocodes',
             subtitle: _statsLoading ? 'Loading...' : '$_couponCount promocodes',
             scale: widget.scale,
-            onTap: () {},
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Promocodes coming soon!')),
+              );
+            },
           ),
           _buildMenuItem(
             title: 'My reviews',
@@ -1965,7 +2076,11 @@ class _ProfileTabState extends State<_ProfileTab> {
                 ? 'Loading...'
                 : 'Reviews for $_reviewCount items',
             scale: widget.scale,
-            onTap: () {},
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('My reviews coming soon!')),
+              );
+            },
           ),
           _buildMenuItem(
             title: 'Settings',
@@ -2423,31 +2538,7 @@ class _ProductCard extends StatelessWidget {
               ),
             ),
             // Badge
-            if (isOnSale)
-              Positioned(
-                left: leftNew,
-                top: topNew,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 8 * scale, vertical: 4 * scale),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFDB3022),
-                    borderRadius: BorderRadius.circular(29 * scale),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '-$discountPercent%',
-                      style: GoogleFonts.inter(
-                        fontSize: 11 * scale,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        height: 1.0,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            else if (isNew)
+            if (isNew)
               Positioned(
                 left: leftNew,
                 top: topNew,
@@ -2461,6 +2552,30 @@ class _ProductCard extends StatelessWidget {
                   child: Center(
                     child: Text(
                       'NEW',
+                      style: GoogleFonts.inter(
+                        fontSize: 11 * scale,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            else if (isOnSale)
+              Positioned(
+                left: leftNew,
+                top: topNew,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 8 * scale, vertical: 4 * scale),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDB3022),
+                    borderRadius: BorderRadius.circular(29 * scale),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '-$discountPercent%',
                       style: GoogleFonts.inter(
                         fontSize: 11 * scale,
                         color: Colors.white,

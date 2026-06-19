@@ -56,7 +56,7 @@ app:
     enabled: ${APP_SEED_ENABLED:true}
   jwt:
     secret: MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc=
-    expirationMs: 3600000
+    expirationMs: 86400000
     refreshExpirationMs: 604800000
   oauth2:
     authorizedRedirectUris: ${AUTHORIZED_REDIRECT_URIS:http://localhost:8080/oauth2/redirect.html,http://lvh.me:8080/oauth2/redirect.html,authapp://oauth2/redirect}
@@ -73,7 +73,7 @@ spring:
       on-profile: postgresql
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/aaaa
+    url: jdbc:postgresql://localhost:5432/bbbb
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: 1

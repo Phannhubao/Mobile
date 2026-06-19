@@ -31,7 +31,7 @@ class _BagScreenState extends State<BagScreen> {
       discountLabel: '15%\noff',
       daysRemaining: 23,
       imageUrl:
-          'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&fit=crop',
+          'https://i1.pickpik.com/photos/363/436/849/beach-chill-enjoyment-girl-8838fb04b54d0296910a8d9c53b7c470.jpg',
     ),
     PromoCode(
       code: 'mypromocode2022',
